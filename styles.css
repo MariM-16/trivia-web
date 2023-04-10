@@ -1,0 +1,43 @@
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    text-align: center;
+  }
+  
+  #game-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 50px;
+  }
+  
+  #players-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .player-card {
+    background-color: #f8f8f8;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 150px;
+  }
+  
+  #question-container {
+    text-align: center;
+  }
+  
+  .option {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  #status-container {
+    text-align: center;
+  }
+  
+  

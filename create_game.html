@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Juego en Modo Preguntón</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+  <h1>Juego en Modo Preguntón</h1>
+  <div id="game-container">
+    <div id="players-container">
+      <div class="player-card">
+        <h2>Jugador 1</h2>
+        <p>Puntaje: <span id="score-1">0</span></p>
+        <p>Estado: Preguntón</p>
+        <p>Faltas: <span id="strikes-1">0</span></p>
+        <p>Descalificaciones: <span id="disqualifications-1">0</span></p>
+      </div>
+      <!-- Repetir la estructura de la tarjeta del jugador para los otros jugadores (Jugador 2, 3, 4, 5) -->
+    </div>
+    <div id="question-container">
+      <h2>Pregunta:</h2>
+      <p id="question">¿Cuál es la capital de Francia?</p>
+      <!-- Botones de opciones de respuesta -->
+      <button class="option" onclick="answerQuestion('1')">Opción 1</button>
+      <button class="option" onclick="answerQuestion('2')">Opción 2</button>
+      <button class="option" onclick="answerQuestion('3')">Opción 3</button>
+      <button class="option" onclick="answerQuestion('4')">Opción 4</button>
+    </div>
+    <div id="status-container">
+      <h2>Estado del juego:</h2>
+      <p>Jugador actual: <span id="current-player">Jugador 1</span></p>
+      <p>Tiempo restante: <span id="timer">30</span> segundos</p>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
