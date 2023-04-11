@@ -1,3 +1,59 @@
+const loginForm = document.getElementById('loginForm');
+const errorMessage = document.getElementById('errorMessage');
+const gameSection = document.getElementById('game-section');
+const gameContainer = document.getElementById('game-container');
+const loginSection = document.getElementById('login-section');
+
+
+loginForm.addEventListener('submit', async (event) => {
+  event.preventDefault(); // Evitar que el formulario se envíe automáticamente
+
+  const username = document.getElementById('username-input').value;
+  const password = document.getElementById('password-input').value;
+
+  // Crear objeto de datos
+  const data = {
+    username: username,
+    password: password
+  };
+  // Enviar solicitud POST a la API
+  try {
+    const response = await fetch('https://trivia-bck.herokuapp.com/api/token/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    if (response.ok) {
+      // El inicio de sesión fue exitoso
+      const result = await response.json();
+      // Hacer algo con la respuesta del servidor, por ejemplo, redirigir a una página de inicio
+      console.log('Inicio de sesión exitoso:', result);
+      console.log(result.refresh);
+    } else {
+      // Mostrar mensaje de error si la respuesta del servidor no es exitosa
+      const error = await response.json();
+      errorMessage.textContent = error.message;
+    }
+  } catch (error) {
+    console.error('Error en la solicitud:', error);
+  }
+});
+
+
+
+// Agregar evento de click al botón de inicio de sesión
+document.getElementById('login-button').addEventListener('click', function() {
+  // Ocultar sección de inicio de sesión
+  loginSection.style.display = 'none';
+  // Mostrar sección del juego
+  gameSection.style.display = 'block';
+  gameContainer.style.display= 'flex' ;
+});
+
+
+
 let currentPlayer = 1; // Jugador actual
 let timer = 30; // Tiempo restante
 let question = "¿Cuál es la capital de Francia?"; // Pregunta actual

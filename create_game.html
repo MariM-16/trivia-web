@@ -1,11 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Juego en Modo Preguntón</title>
+  <title>Trivia Game</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
+  <link rel="stylesheet" type="text/css" href="player.css">
+
 </head>
 <body>
-  <h1>Juego en Modo Preguntón</h1>
+    <header>
+    <h1>Trivia Game</h1>
+  </header>
+  <section id="login-section">
+    <!-- Formulario de inicio de sesión -->
+      <h1>Iniciar sesión</h1>
+      <form id="loginForm">
+        <label for="username">Nombre de Usuario:</label>
+        <input type="text" id="username-input" name="username" required>
+        <br>
+        <label for="password">Contraseña:</label>
+        <input type="password" id="password-input" name="password" required>
+        <input type="submit" id="login-button" value="Iniciar Sesión">
+      </form>
+    <!-- Aquí se ingresaría el nombre de usuario y contraseña para iniciar sesión -->
+      <p id="errorMessage" style="color: red;"></p>
+  </section>
   <div id="game-container">
     <div id="players-container">
       <div class="player-card">
@@ -17,15 +35,69 @@
       </div>
       <!-- Repetir la estructura de la tarjeta del jugador para los otros jugadores (Jugador 2, 3, 4, 5) -->
     </div>
-    <div id="question-container">
-      <h2>Pregunta:</h2>
-      <p id="question">¿Cuál es la capital de Francia?</p>
-      <!-- Botones de opciones de respuesta -->
-      <button class="option" onclick="answerQuestion('1')">Opción 1</button>
-      <button class="option" onclick="answerQuestion('2')">Opción 2</button>
-      <button class="option" onclick="answerQuestion('3')">Opción 3</button>
-      <button class="option" onclick="answerQuestion('4')">Opción 4</button>
-    </div>
+    <section id="game-section">
+      <!-- Área principal del juego -->
+      <div id="game-status"  style="display: none;">
+        <h2>Estado del juego</h2>
+        <p>DUDA</p>
+        <!-- Aquí se puede mostrar el estado del juego, como el número de jugadores, el nombre del preguntón, etc. -->
+        <!-- Muestra el estado del juego, como el nombre del jugador, el puntaje, el preguntón, etc. -->
+      </div>
+      <div id="question-area">
+        <div id="question-container">
+          <h2>Pregunta:</h2>
+          <p id="question">¿Cuál es la capital de Francia?</p>
+          <!-- Botones de opciones de respuesta -->
+          <button class="option" onclick="answerQuestion('1')">Opción 1</button>
+          <button class="option" onclick="answerQuestion('2')">Opción 2</button>
+          <button class="option" onclick="answerQuestion('3')">Opción 3</button>
+          <button class="option" onclick="answerQuestion('4')">Opción 4</button>
+        </div>
+        <!-- Muestra la pregunta del preguntón -->
+        <!-- Aquí se mostraría la ayuda proporcionada por las APIs públicas para la pregunta -->
+        <!-- También se mostraría un temporizador para que los jugadores ingresen sus respuestas -->
+      </div>
+      <div id="api-area">
+        <div id="api-area1">
+          <p>Aquí se muestra la evaluación del preguntón
+            Aquí se muestra la evaluación del preguntón
+            Aquí se muestra la evaluación del preguntón
+          </p>
+          
+        </div>
+        <div id="api-area2">
+          <p>Aquí se muestra la evaluación del preguntón
+            Aquí se muestra la evaluación del preguntón
+            Aquí se muestra la evaluación del preguntón
+          </p>
+          
+        </div>
+      </div>
+      
+      <div id="answer-area">
+        <h2>Respuesta</h2>
+        <input type="text" id="answer-input" placeholder="Escribe tu respuesta">
+        <button class="button" id="answer-button">Enviar respuesta</button>
+        <!-- Área donde los jugadores ingresan sus respuestas -->
+        <!-- Aquí se mostrarían las opciones de respuesta o un campo de texto para ingresar la respuesta -->
+      </div>
+      <div id="feedback-area">
+        <h2>Evaluación</h2>
+        <p id="feedback-text">Aquí se muestra la evaluación del preguntón</p>
+        <!-- Aquí se puede mostrar la ayuda proporcionada por las APIs públicas para la evaluación del preguntón -->
+
+        <!-- Muestra el feedback del preguntón sobre las respuestas de los jugadores -->
+        <!-- Aquí se mostraría la evaluación de las respuestas (buena, más o menos, mala) -->
+        <!-- También se mostraría la respuesta correcta y la evaluación del compañero -->
+        <!-- Los jugadores también podrían calificar si están de acuerdo con la evaluación del preguntón -->
+      </div>
+      <div id="game-control">
+        <p>DUDAgamee</p>
+        <!-- Aquí se pueden mostrar los botones para controlar el juego, como iniciar la partida o calificar la evaluación -->
+
+        <!-- Botones para controlar el flujo del juego, como iniciar la partida, siguiente pregunta, etc. -->
+      </div>
+    </section>
     <div id="status-container">
       <h2>Estado del juego:</h2>
       <p>Jugador actual: <span id="current-player">Jugador 1</span></p>

@@ -1,0 +1,101 @@
+
+ 
+  
+  main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  #login-section,
+  #game-section {
+    width: 600px;
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  #login-section {
+    text-align: center;
+  }
+  .displ{
+    display: none;
+  }
+  .displyes{
+    display: block;
+  }
+
+  
+  #game-status {
+    margin-bottom: 20px;
+  }
+  
+  #question-area {
+    padding: 10px;
+    background-color: #fff;
+    margin-bottom: 20px;
+  }
+  
+  #answer-area {
+    padding: 10px;
+    background-color: #fff;
+    margin-bottom: 20px;
+  }
+  #api-area {
+    padding: 10px;
+    background-color: #fff;
+    margin-bottom: 20px;
+    display: flex;
+  }
+  #api-area1 {
+    padding: 10px;
+    background-color: #fff;
+    margin-bottom: 20px;
+  }
+  #api-area2 {
+    padding: 10px;
+    background-color: #fff;
+    margin-bottom: 20px;
+  }
+  
+  #feedback-area {
+    padding: 10px;
+    background-color: #fff;
+    margin-bottom: 20px;
+  }
+  
+  #game-control {
+    text-align: center;
+  }
+  
+  .button {
+    display: inline-block;
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .button:hover {
+    background-color: #555;
+  }
+  
+  input[type="text"] {
+    padding: 5px;
+    border: none;
+    border-bottom: 1px solid #333;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+  
+  /* Media Query para pantallas pequeñas */
+  @media (max-width: 768px) {
+    #login-section,
+    #game-section {
+      width: 90%;
+    }
+  }
