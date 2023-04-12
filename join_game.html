@@ -10,16 +10,49 @@
 </head>
 <body>
     <header>
-    <h1>Trivia Game 🎮❓</h1>
-  </header>
+        <div class="titulo">
+          <img class = "imagen "src="images/pngwing.com.png">
+          <h1>Trivia Game</h1>
+          <img class = "imagen "src="images/pngwing.com.png">
+        </div>
+      
+    </header>
   <h1 class="title-juegos">JUEGOS DISPONIBLES</h1>
   <div class="container" id="container">
     
   </div>
   <div class="boton">
-    <button class="crear">Crear nueva partida</button>
+    <button id="crear" class="crear">Crear nueva partida</button>
   </div>
-  
+  <!-- Modal de creación de partida -->
+  <div id="modalCrearPartida" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Nueva Partida</h2>
+      <!-- Contenido del formulario del modal -->
+      <form id="formularioCrearPartida">
+        <!-- Campos del formulario -->
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" class="nombre">
+        <br>
+        <label for="tiempoPregunta">Tiempo para enviar pregunta:</label>
+        <select id="tiempoPregunta">
+          <option value="60">60 segundos</option>
+          <option value="90">90 segundos</option>
+          <option value="120">120 segundos</option>
+        </select>
+        <br>
+        <br>
+        <label for="tiempoRespuesta">Tiempo para enviar respuesta:</label>
+        <select id="tiempoRespuesta">
+          <option value="60">60 segundos</option>
+          <option value="90">90 segundos</option>
+          <option value="120">120 segundos</option>
+        </select>
+        <br>
+        <input class="btn-crear" type="submit" value="Crear">
+      </form>
+    </div>
   </div>
 </body>
 </html>

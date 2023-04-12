@@ -129,7 +129,7 @@ function generatorGames(){;
   
         //asignamos las clases a lo creado
         game.classList = "game";
-        game.textContent = "Sala: "+ count + " 🔹 (0/5) participantes";
+        game.textContent = "Sala: "+ count + " 🔹 (0/13) participantes";
         count++;
         game.appendChild(br);
         game.appendChild(br);
@@ -143,4 +143,25 @@ function generatorGames(){;
     };
 }
 }
+if (pathname.includes("join_game.html")) {
+    let btnCrearPartida = document.getElementById('crear');
+    let modalCrearPartida = document.getElementById('modalCrearPartida');
+    let closeBtn = document.getElementsByClassName('close')[0];
+
+    btnCrearPartida.onclick = function() {
+      modalCrearPartida.classList.toggle("displayblock");
+    }
+
+    closeBtn.onclick = function() {
+      modalCrearPartida.classList.remove("displayblock");
+    }
+
+    window.onclick = function(event) {
+      if (event.target == modalCrearPartida) {
+        modalCrearPartida.classList.toggle("displayblock");
+      }
+}
+}
+
+
 generatorGames();
