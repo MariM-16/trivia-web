@@ -3,8 +3,9 @@ const errorMessage = document.getElementById('errorMessage');
 const gameSection = document.getElementById('game-section');
 const gameContainer = document.getElementById('game-container');
 const loginSection = document.getElementById('login-section');
+let pathname = window.location.pathname;
 
-
+if (pathname.includes("create_game.html")) {
 loginForm.addEventListener('submit', async (event) => {
   event.preventDefault(); // Evitar que el formulario se envíe automáticamente
 
@@ -45,11 +46,15 @@ loginForm.addEventListener('submit', async (event) => {
 
 // Agregar evento de click al botón de inicio de sesión
 document.getElementById('login-button').addEventListener('click', function() {
+  window.location.href = "join_game.html";
+  /*
   // Ocultar sección de inicio de sesión
   loginSection.style.display = 'none';
   // Mostrar sección del juego
   gameSection.style.display = 'block';
   gameContainer.style.display= 'flex' ;
+  */
+
 });
 
 
@@ -109,3 +114,33 @@ function updateTimer() {
 window.onload = function() {
   updateTimer();
 }
+}
+
+2
+//generamos las partidas ya existentes
+function generatorGames(){;
+  if (pathname.includes("join_game.html")) {
+    let container = document.getElementById("container"); 
+    let count=1;
+    for(let i = 0; i<10; i++ ) { 
+        let game = document.createElement("div");
+        let br = document.createElement("br");
+        let button = document.createElement("button");
+  
+        //asignamos las clases a lo creado
+        game.classList = "game";
+        game.textContent = "Sala: "+ count + " 🔹 (0/5) participantes";
+        count++;
+        game.appendChild(br);
+        game.appendChild(br);
+        button.textContent = "Unirse";
+        button.classList = "bton";
+        game.appendChild(button);
+  
+        //incluimos los juegos en el contenedor
+        container.appendChild(game);
+      
+    };
+}
+}
+generatorGames();

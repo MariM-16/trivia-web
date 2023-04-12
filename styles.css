@@ -2,6 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    
   }
 html{
   background-color: #66bfbf;
@@ -114,8 +115,69 @@ header {
   }
   
   .register:hover {
-    color: #f76b8a;
+    color: red;
+  }
+  .container{
+    margin: 2em ;
+    flex-direction: column;
+    background-color: #eaf6f6;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    padding: 13px;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    max-height: 300px;
+  }
+  .title-juegos{
+    color: #eaf6f6;
   }
   
-  
+  .game{
+    position: relative;
+    height: 4em;
+    margin: 3px;
+    background-color: #ffcbcb;
+    box-shadow: 6px 9px 10px #602640;
+    border: 1px solid #ffb5b5;
+    color: #132743;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 1em;
+    padding: 0.5em;
+    
+  }
+  .bton{
+    background-color: #407088;
+    border-radius: 10px;
+    color: #fcfefe;
+    cursor: pointer;
+    padding: 7px 10px;
+    text-align: center;
+    transition: all 250ms;
+    border: 0;
+    font-size: 0.8em;
+    touch-action: manipulation;
+    margin-bottom: 10px;
+    margin-top: 0.5em;
+  }
+.boton{
+  text-align: center;
+}
+  .crear{
+    background-color: #f76b8a;
+    border-radius: 10px;
+    color: #fcfefe;
+    cursor: pointer;
+    padding: 7px 10px;
+    text-align: center;
+    transition: all 250ms;
+    border: 0;
+    font-size: 1.2em;
+    touch-action: manipulation;
+    margin-bottom: 10px;
+    align-self: center;
+  }
   
