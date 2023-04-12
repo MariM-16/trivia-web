@@ -10,18 +10,21 @@
 </head>
 <body>
     <header>
-    <h1>Trivia Game</h1>
+    <h1>Trivia Game 🎮❓</h1>
   </header>
   <section id="login-section">
     <!-- Formulario de inicio de sesión -->
-      <h1>Iniciar sesión</h1>
+      <h1 class="iniciar-sesion">Iniciar sesión</h1>
       <form id="loginForm">
         <label for="username">Nombre de Usuario:</label>
         <input type="text" id="username-input" name="username" required>
         <br>
         <label for="password">Contraseña:</label>
         <input type="password" id="password-input" name="password" required>
+        <br>
         <input type="submit" id="login-button" value="Iniciar Sesión">
+        <br>
+        <a href="register.html" class="register">Registrarse</a>
       </form>
     <!-- Aquí se ingresaría el nombre de usuario y contraseña para iniciar sesión -->
       <p id="errorMessage" style="color: red;"></p>

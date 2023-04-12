@@ -10,15 +10,21 @@
   
   #login-section,
   #game-section {
-    width: 600px;
-    background-color: #f5f5f5;
+    width: 500px;
+    margin: 0 auto;
+    margin-top: 2em ;
+    flex-direction: column;
+    background-color: #eaf6f6;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    
   }
   
   #login-section {
     text-align: center;
+
   }
   .displ{
     display: none;
