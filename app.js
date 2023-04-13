@@ -4,6 +4,11 @@ const gameSection = document.getElementById('game-section');
 const gameContainer = document.getElementById('game-container');
 const loginSection = document.getElementById('login-section');
 let pathname = window.location.pathname;
+let preguntaEnviada;
+let respuestaEnviada;
+let tiempoPreguntaSelect;
+let tiempoRespuestaSelect;
+let nombreInput;
 
 if (pathname.includes("create_game.html")) {
 loginForm.addEventListener('submit', async (event) => {
@@ -81,9 +86,9 @@ if (pathname.includes("join_game.html")) {
     }
 
     crearBtn.addEventListener("click", function() {
-      let nombreInput = document.getElementById("nombre").value;
-      let tiempoPreguntaSelect = document.getElementById("tiempoPregunta").value;
-      let tiempoRespuestaSelect = document.getElementById("tiempoRespuesta").value;
+      nombreInput = document.getElementById("nombre").value;
+      tiempoPreguntaSelect = document.getElementById("tiempoPregunta").value;
+      tiempoRespuestaSelect = document.getElementById("tiempoRespuesta").value;
 
       //agregamos la partida en los juegos disponibles
       let game = document.createElement("div");
@@ -108,7 +113,12 @@ if (pathname.includes("join_game.html")) {
       console.log("Evento de clic agregado");
       event.preventDefault(); // Evitar que la página se recargue
       modalCrearPartida.classList.remove("displayblock");
-
+      let botones = document.querySelectorAll(".bton");
+      botones.forEach(function(boton) {
+        boton.addEventListener("click", function() {
+          window.location.href = "start_game.html";
+        });
+      });
     });
 
     let botones = document.querySelectorAll(".bton");
@@ -152,7 +162,7 @@ function generatorGames(){;
 
 if (pathname.includes("start_game.html")) {
   let currentPlayer = 1; // Jugador actual
-  let timer = 30; // Tiempo restante
+  let timer = tiempoPreguntaSelect; // Tiempo restante
   let question = "¿Cuál es la capital de Francia?"; // Pregunta actual
   let playerScores = [0, 0, 0, 0, 0]; // Puntajes de los jugadores
   let strikes = [0, 0, 0, 0, 0]; // Faltas de los jugadores
@@ -206,4 +216,43 @@ if (pathname.includes("start_game.html")) {
   window.onload = function() {
     updateTimer();
   }
+
+  let answerContainer = document.getElementById('answer-area');
+  //vemos la pregunta que se envio 
+  document.getElementById('btn-enviar-pregunta').addEventListener('click', function() {
+    let questionInput = document.getElementById("question"); // Obtén el elemento input por su ID
+    let questionValue = questionInput.value; // Accede al valor del input
+    preguntaEnviada = questionValue;
+    document.getElementById('btn-enviar-pregunta').classList.toggle("btn-hidden");
+    
+    let questionContainer = document.getElementById('question-container');
+
+    questionContainer.removeChild(questionInput);
+
+    let text = document.createElement("div");
+    text.classList.add("text-game-section");
+    text.textContent = preguntaEnviada;
+    questionContainer.appendChild(text);
+
+    
+    answerContainer.classList.remove("btn-hidden");
+    answerContainer.classList.add("displayblock");
+    console.log(answerContainer);
+    
+  });
+
+  document.getElementById('btn-enviar-respuesta').addEventListener('click', function() {
+    let answerInput = document.getElementById("answer-input"); // Obtén el elemento input por su ID
+    let answerValue = answerInput.value; // Accede al valor del input
+    respuestaEnviada = answerValue;
+    document.getElementById('btn-enviar-respuesta').classList.toggle("btn-hidden");
+    
+    answerContainer.removeChild(answerInput);
+
+    let textAnswer = document.createElement("div");
+    textAnswer.classList.add("text-game-section");
+    textAnswer.textContent = respuestaEnviada;
+    answerContainer.appendChild(textAnswer);
+    
+  });
 }
