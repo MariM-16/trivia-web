@@ -1,13 +1,3 @@
-
- 
-  
-  main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
   #login-section,
   #game-section {
     width: 500px;
@@ -26,19 +16,11 @@
     text-align: center;
 
   }
-  .displ{
-    display: none;
-  }
-  .displyes{
-    display: block;
-  }
-
-  
   #game-status {
     margin-bottom: 20px;
   }
   
-  #question-area {
+  #question-area, #question-section {
     padding: 10px;
     background-color: #fff;
     margin-bottom: 20px;
@@ -55,16 +37,12 @@
     margin-bottom: 20px;
     display: flex;
   }
-  #api-area1 {
+  .api-areaint {
     padding: 10px;
     background-color: #fff;
     margin-bottom: 20px;
   }
-  #api-area2 {
-    padding: 10px;
-    background-color: #fff;
-    margin-bottom: 20px;
-  }
+
   
   #feedback-area {
     padding: 10px;
@@ -105,3 +83,42 @@
       width: 90%;
     }
   }
+
+/*nuevo pregunton 1*/
+  
+  #question-form,#answer-nosy-form {
+    display: flex;
+  }
+  
+  #question-input,#answer-nosy-input  {
+    flex-grow: 1;
+    padding: 5px;
+  }
+  
+  #answer-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .answer-item {
+    padding: 5px;
+    margin-bottom: 5px;
+    background-color: #ffffff;
+    border-radius: 5px;
+  }
+  
+  #score-form {
+    display: flex;
+  }
+
+  #score-input {
+    flex-grow: 1;
+    padding: 5px;
+  }
+  
+  .button-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  
+

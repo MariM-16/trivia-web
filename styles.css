@@ -23,7 +23,8 @@ header {
   #game-container {
     display: flex;
     justify-content: space-around;
-    margin-top: 50px;
+    margin: 50px;
+
   }
   
   #players-container {
@@ -36,6 +37,7 @@ header {
     padding: 10px;
     margin-bottom: 10px;
     width: 150px;
+    box-shadow: 6px 9px 10px #602640;
   }
   
   #question-container {
@@ -50,10 +52,16 @@ header {
     cursor: pointer;
   }
   
-  #status-container {
+  #status-container{
     text-align: center;
+  }
+  
+  .status-scroll {  
     position: sticky;
-    top: 0; 
+    top:80px;
+    box-shadow: 6px 9px 10px #602640;
+    background-color: #f8f8f8;
+    padding: 10px;
   }
 
   #username-input {

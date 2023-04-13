@@ -42,8 +42,6 @@ loginForm.addEventListener('submit', async (event) => {
   }
 });
 
-
-
 // Agregar evento de click al botón de inicio de sesión
 document.getElementById('login-button').addEventListener('click', function() {
   window.location.href = "join_game.html";
@@ -57,6 +55,113 @@ document.getElementById('login-button').addEventListener('click', function() {
 
 });
 }
+
+if(pathname.includes('/game.html')){
+  
+let currentPlayer = 1; // Jugador actual
+let timer = 60; // Tiempo restante
+let questions = "¿Cuál es la película ganadora del Oscar en 2018?"; // Pregunta actual
+let answ = "La forma del agua"; // Respuesta actual
+let api1="Una joven limpiadora que trabaja en un laboratorio gubernamental";
+let api2="Ganó mejor película, Director, banda sonora y Diseño de producción el mismo día";
+let playerScores = [0, 0, 0, 0, 0]; // Puntajes de los jugadores
+let strikes = [0, 0, 0, 0, 0]; // Faltas de los jugadores
+let disqualifications = [0, 0, 0, 0, 0]; // Descalificaciones de los jugadores
+let answerList = document.getElementById('answer-list');
+
+localStorage.setItem("Pregunta", questions);
+let question= localStorage.getItem("Pregunta");
+localStorage.setItem("RespuestaP", answ);
+let answernosy= localStorage.getItem("RespuestaP");
+
+document.getElementById('question').textContent = question;
+document.getElementById('api-area1').textContent = api1;
+document.getElementById('api-area2').textContent = api2;
+let answerbutton = document.getElementById("answer-button");
+
+  answerbutton.onclick = function() {
+    let answerinput = document.getElementById("answer-input").value;
+    localStorage.setItem("Respuesta", answerinput);
+    //let answin= localStorage.getItem("Respuesta");
+    //answerList.appendChild(answin);
+    document.getElementById('answer-nosy-text').textContent= answernosy;
+  }
+
+// Función para responder a una pregunta en proceso
+
+  function answerQuestion(option) {
+    // Verificar si la opción seleccionada es la respuesta correcta (por ejemplo, opción 1 es la respuesta correcta)
+    if (option === '1') {
+      playerScores[currentPlayer - 1] += 1; // Incrementar el puntaje del jugador actual
+    } else {
+      strikes[currentPlayer - 1] += 1; // Incrementar las faltas del jugador actual
+    }
+    // Cambiar al siguiente jugador
+    currentPlayer = (currentPlayer % 5) + 1;
+    
+    // Actualizar la pregunta y el jugador actual en la vista
+    document.getElementById('question').textContent = question;
+    document.getElementById('answer-nosy-text').textContent= answ;
+    document.getElementById('current-player').textContent = 'Jugador ' + currentPlayer;
+    document.getElementById('score-' + currentPlayer).textContent = playerScores[currentPlayer - 1];
+    document.getElementById('strikes-' + currentPlayer).textContent = strikes[currentPlayer - 1];
+    // Reiniciar el temporizador
+    timer = 60;
+    updateTimer();
+    // Verificar si un jugador ha alcanzado 3 faltas, lo cual resulta en una descalificación
+    if (strikes[currentPlayer - 1] === 3) {
+      disqualifications[currentPlayer - 1] += 1; // Incrementar las descalificaciones del jugador actual
+      document.getElementById('disqualifications-' + currentPlayer).textContent = disqualifications[currentPlayer - 1];
+      currentPlayer = (currentPlayer % 5) + 1; // Cambiar al siguiente jugador
+      document.getElementById('current-player').textContent = 'Jugador ' + currentPlayer;
+      timer = 60;
+      updateTimer();
+    }
+  }
+
+// Función para actualizar el temporizador en la vista
+  function updateTimer() {
+    document.getElementById('timer').textContent = timer + ' segundos';
+    if (timer > 0) {
+      setTimeout(function() {
+        timer--;
+        updateTimer();
+      }, 1000);
+    } else {
+      document.getElementById('timer').textContent = 'AGOTADO';
+      window.alert("Tiempo para responder agotado");
+      timer = 60;
+      answerbutton.disabled=true;
+    }
+  }
+}
+
+if(pathname.includes('/game_nosy.html')){
+
+  let answernossybutton = document.getElementById("answer-nosy-button");
+  let questionbutton = document.getElementById("question-button");
+
+  answernossybutton.onclick = function() {
+    let answernosyinput = document.getElementById("answer-nosy-input").value;
+    localStorage.setItem("RespuestaP", answernosyinput);
+    //let answernosy= localStorage.getItem("RespuestaP");
+    window.alert("Respuesta enviada");   
+  }
+  questionbutton.onclick = function() {
+    let questioninput = document.getElementById("question-input").value;
+    localStorage.setItem("Pregunta", questioninput);
+    //let question= localStorage.getItem("Pregunta");
+    window.alert("Pregunta enviada");  
+  }
+  let answin= localStorage.getItem("Respuesta");
+  document.getElementById('answer-list').textContent= answin;
+  
+}
+
+
+
+
+
 
 
 if (pathname.includes("join_game.html")) {
@@ -95,7 +200,7 @@ if (pathname.includes("join_game.html")) {
       tiempo1.textContent = "Tiempo preguntas: " + tiempoPreguntaSelect + "s";
       tiempo2.textContent = "Tiempo respuestas: " + tiempoRespuestaSelect + "s";
       game.classList = "game";
-      game.textContent = nombreInput + "🔹 (0/13) participantes";
+      game.textContent = nombreInput + "🔹 (0/12) participantes";
       game.appendChild(tiempo1);
       game.appendChild(tiempo2);
       button.textContent = "Unirse";
@@ -114,7 +219,7 @@ if (pathname.includes("join_game.html")) {
     let botones = document.querySelectorAll(".bton");
     botones.forEach(function(boton) {
       boton.addEventListener("click", function() {
-        window.location.href = "game.html";
+        window.location.href = "game_nosy.html";
       });
     });
 }

@@ -6,6 +6,8 @@
   <link rel="stylesheet" type="text/css" href="styles.css">
   <link rel="stylesheet" type="text/css" href="player.css">
   <script defer src="app.js"></script>
+  <script defer src="script.js"></script>
+
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
 </head>
 <body>
@@ -49,49 +51,45 @@
         <p>Faltas: <span id="strikes-1">0</span></p>
         <p>Descalificaciones: <span id="disqualifications-1">0</span></p>
       </div>
+
     </div>
     <section id="game-section">
 
-      <div id="question-area">
-        <div id="question-container">
-          <h2>Pregunta:</h2>
-          <p id="question">¿Cuál es la capital de Francia?</p>
-        </div>
-      </div>
-      <div id="api-area">
-        <div class="api-areaint">
-          <p id="api-area1">Aquí se muestra la ayuda API 1</p>
-          
-        </div>
-        <div class="api-areaint">
-          <p id="api-area2">Aquí se muestra la ayuda API 2</p>
-          
-        </div>
-      </div>
-      
-      <div id="answer-area">
+      <div id="question-section">
+        <h2>Pregunta</h2>
+        <form id="question-form">
+          <input type="text" id="question-input" placeholder="Ingresa tu pregunta..." required>
+          <button type="submit" id="question-button">Enviar</button>
+        </form>
         <h2>Respuesta</h2>
-        <input type="text" id="answer-input" placeholder="Escribe tu respuesta" required>
-        <button class="button" id="answer-button">Enviar respuesta</button>
-             
+        <form id="answer-nosy-form">
+          <input type="text" id="answer-nosy-input" placeholder="Ingresa la respuesta correcta" required>
+          <button type="submit" id="answer-nosy-button">Enviar</button>
+        </form>
       </div>
-      <div id="feedback-area">
-        <h2>Evaluación</h2>
-        <p id="feedback-text">Aquí se muestra la evaluación del preguntón</p>
-        <p id="answer-nosy-text">Respuesta del preguntón</p>
-        <button class="button" id="answer-ev-button" value="1">Buena</button>
-        <button class="button" id="answer-ev-button" value="0">Mala</button>
+      <div id="answer-section">
+        <h2>Respuestas Jugadores</h2>
+        <ul id="answer-list">
+          <!-- Respuestas recibidas se agregan dinámicamente con JavaScript -->
+        </ul>
       </div>
+      <div id="score-section">
+        <h2>Enviar Calificaciones</h2>
+        <form id="score-form">
+          <input type="number" id="score-input" min="0" max="2" placeholder="Ingresa calificación (0-2)">
+          <button type="submit">Enviar</button>
+        </form>
+      </div>
+
     </section>
     <div id="status-container">
       <div class="status-scroll">
         <h2>Estado del juego:</h2>
         <p>Preguntón: <span id="current-player">Jugador 1</span></p>
         <p>Tiempo restante: <span id="timer">30</span> segundos</p>
-        <a href="game_nosy.html">nosy</a>
+        <a href="game.html">player</a>
       </div>
     </div>
   </div>
-  
 </body>
 </html>
