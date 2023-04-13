@@ -120,5 +120,8 @@
     opacity: 0.5;
     pointer-events: none;
   }
-  
+  #answer-nosy-text {
+    text-decoration: solid;
+    color: #333;
+  }
 
