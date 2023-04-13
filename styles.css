@@ -21,7 +21,7 @@ header {
    color: #f76b8a;
   }
   #game-container {
-    display: none;
+    display: flex;
     justify-content: space-around;
     margin-top: 50px;
   }
