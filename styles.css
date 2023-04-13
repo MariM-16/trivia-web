@@ -277,18 +277,13 @@ header {
     border-radius: 10px;
     color: #fcfefe;
     cursor: pointer;
-    padding: 7px 10px;
     text-align: center;
-    transition: all 250ms;
     border: 0;
     font-size: 1.5em;
+    padding: 7px 10px;
     touch-action: manipulation;
-    margin-bottom: 10px;
     align-self: center;
-    margin-left: 2em;
-    margin-right: 50px;
-    margin-bottom: 1em;
-
+    margin-right: 1em;
     box-shadow: rgba(217, 24, 178, 0.2) 0 -25px 18px -14px inset,rgba(234, 66, 200, 0.15) 0 1px 2px,rgba(187, 44, 177, 0.15) 0 2px 4px,rgba(102, 15, 93, 0.15) 0 4px 8px,rgba(180, 44, 187, 0.15) 0 8px 16px,rgba(246, 48, 206, 0.15) 0 16px 32px;
 }
 .parte-superior{
@@ -302,7 +297,7 @@ header {
   font-size: 20px;
   color: #132743;
 }
-.btn-enviar-respuesta, .btn-enviar-pregunta{
+.btn-enviar-respuesta, .btn-enviar-pregunta, .btn-enviar-calificaciones{
   background-color: #f76b8a;
   border-radius: 10px;
   color: #fcfefe;
@@ -336,4 +331,101 @@ header {
   color: #132743;
 }
 
+/* CSS MODAL SACADO DE https://www.w3schools.com/howto/howto_css_modals.asp */
+.modal {
+  display: none; 
+  position: fixed;
+  z-index: 1; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: #702e4c94; 
+  font-size: 25px;
+}
 
+.modal-content {
+  text-align: center;
+  font-variant: small-caps;
+  font-family: sans-serif;
+  background-color: #fdfdcb;
+  margin: 15% auto; 
+  padding: 20px;
+  border: 1px solid #ec729c;
+  width: 80%;
+  color: #9a2459;
+}
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+.retry{
+  background-color: #c54c82;
+  border-radius: 100px;
+  box-shadow: rgba(217, 24, 178, 0.2) 0 -25px 18px -14px inset,rgba(234, 66, 200, 0.15) 0 1px 2px,rgba(187, 44, 177, 0.15) 0 2px 4px,rgba(102, 15, 93, 0.15) 0 4px 8px,rgba(180, 44, 187, 0.15) 0 8px 16px,rgba(246, 48, 206, 0.15) 0 16px 32px;
+  color: #fdfdcb;
+  cursor: pointer;
+  display: inline-block;
+  font-family: CerebriSans-Regular,-apple-system,system-ui,Roboto,sans-serif;
+  padding: 7px 10px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 250ms;
+  border: 0;
+  font-size: 0.8em;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  
+  /*
+  Botón copiado de: 
+  https://getcssscan.com/css-buttons-examples
+  */
+}
+.modalNone{
+  display: none;
+}
+.modalBlock{
+  display: block;
+}
+
+#containerRespuestas{
+  margin: 2em ;
+  background-color: #eaf6f6;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  padding: 13px;
+  flex-wrap: wrap;
+}
+
+.respuestas{
+    position: relative;
+    height: 5em;
+    margin: 3px;
+    background-color: #ffcbcb;
+    box-shadow: 6px 9px 10px #602640;
+    border: 1px solid #ffb5b5;
+    color: #132743;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 1.3em;
+    padding: 0.5em;
+    margin-bottom: 2em;
+    width: 5em;
+    
+}
