@@ -124,15 +124,19 @@ function generatorGames(){;
     let count=1;
     for(let i = 0; i<10; i++ ) { 
         let game = document.createElement("div");
-        let br = document.createElement("br");
         let button = document.createElement("button");
+        let tiempo1= document.createElement("h3");
+        let tiempo2= document.createElement("h3");
+
+        tiempo1.textContent = "Tiempo preguntas: " + 60 + "s";
+        tiempo2.textContent = "Tiempo respuestas: " + 60 + "s";
   
         //asignamos las clases a lo creado
         game.classList = "game";
         game.textContent = "Sala: "+ count + " 🔹 (0/13) participantes";
         count++;
-        game.appendChild(br);
-        game.appendChild(br);
+        game.appendChild(tiempo1);
+        game.appendChild(tiempo2);
         button.textContent = "Unirse";
         button.classList = "bton";
         game.appendChild(button);

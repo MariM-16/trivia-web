@@ -129,7 +129,7 @@ header {
     padding: 13px;
     flex-wrap: wrap;
     overflow-y: auto;
-    max-height: 300px;
+    max-height: 500px;
   }
   .title-juegos{
     color: #eaf6f6;
@@ -137,7 +137,7 @@ header {
   
   .game{
     position: relative;
-    height: 4em;
+    height: 9em;
     margin: 3px;
     background-color: #ffcbcb;
     box-shadow: 6px 9px 10px #602640;
@@ -255,5 +255,9 @@ header {
 
   .displayblock{
     display: block;
+  }
+
+  h3{
+    font-size: 1em;
   }
 
