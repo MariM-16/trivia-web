@@ -10,15 +10,15 @@
   
   #login-section,
   #game-section {
-    width: 500px;
-    margin: 0 auto;
-    margin-top: 2em ;
+    width: 45em;
     flex-direction: column;
     background-color: #eaf6f6;
     padding: 20px;
-    border-radius: 5px;
+    border-radius: 10px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
     display: flex;
+    color: #132743;
+    height:min-content;
     
   }
   
@@ -48,6 +48,7 @@
     padding: 10px;
     background-color: #fff;
     margin-bottom: 20px;
+    text-align: center;
   }
   #api-area {
     padding: 10px;

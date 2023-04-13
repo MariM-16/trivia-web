@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>Proyecto 2 - grupo 13</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <link rel="stylesheet" type="text/css" href="player.css">
+  <script defer src="app.js"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+</head>
+<body>
+    <header>
+      <div class="titulo">
+        <img class = "imagen "src="images/pngwing.com.png">
+        <h1>Trivia Game</h1>
+        <img class = "imagen "src="images/pngwing.com.png">
+      </div>
+    
+  </header>
+  <div id="game-container">
+    <div id="players-container">
+      <div class="player-card">
+        <div id="nombre-jugador">● Jugador: jugador1</div>
+        <div id="estado-jugador">● Estado: Preguntón</div>
+        <div id="puntaje-jugador">● Puntaje: <span id="score-1">0</span></div>
+        <div id="faltas-jugador">● Faltas: <span id="strikes-1">0</span></div>
+        <div id="descalificaciones-jugador">● Descalificaciones: <span id="disqualifications-1">0</span></div>
+      </div>
+      <div class="player-card">
+        <div id="nombre-jugador">● Jugador: jugador2</div>
+        <div id="estado-jugador">● Estado: Jugador</div>
+        <div id="puntaje-jugador">● Puntaje: <span id="score-1">0</span></div>
+        <div id="faltas-jugador">● Faltas: <span id="strikes-1">0</span></div>
+        <div id="descalificaciones-jugador">● Descalificaciones: <span id="disqualifications-1">0</span></div>
+      </div>
+      <div class="player-card">
+        <div id="nombre-jugador">● Jugador: jugador3</div>
+        <div id="estado-jugador">● Estado: Jugador</div>
+        <div id="puntaje-jugador">● Puntaje: <span id="score-1">0</span></div>
+        <div id="faltas-jugador">● Faltas: <span id="strikes-1">0</span></div>
+        <div id="descalificaciones-jugador">● Descalificaciones: <span id="disqualifications-1">0</span></div>
+      </div>
+      <div class="player-card">
+        <div id="nombre-jugador">● Jugador: jugador4</div>
+        <div id="estado-jugador">● Estado: Jugador</div>
+        <div id="puntaje-jugador">● Puntaje: <span id="score-1">0</span></div>
+        <div id="faltas-jugador">● Faltas: <span id="strikes-1">0</span></div>
+        <div id="descalificaciones-jugador">● Descalificaciones: <span id="disqualifications-1">0</span></div>
+      </div>
+      <div class="player-card">
+        <div id="nombre-jugador">● Jugador: jugador5</div>
+        <div id="estado-jugador">● Estado: Jugador</div>
+        <div id="puntaje-jugador">● Puntaje: <span id="score-1">0</span></div>
+        <div id="faltas-jugador">● Faltas: <span id="strikes-1">0</span></div>
+        <div id="descalificaciones-jugador">● Descalificaciones: <span id="disqualifications-1">0</span></div>
+      </div>
+    </div>
+    <section id="game-section">
+
+      <div id="game-status"  style="display: none;">
+        <h2>Estado del juego</h2>
+      
+       
+      </div>
+      <div id="question-area">
+        <div id="question-container">
+          <h2>Pregunta:</h2>
+          <input type="text" id="question" name="question" placeholder="Escribe tu pregunta aquí...">
+          <button class="btn-enviar-pregunta" id="btn-enviar-pregunta" id="answer-button">Enviar</button>
+        </div>
+        
+      </div>
+  
+      
+      <div id="answer-area">
+        <h2>Respuesta</h2>
+        <input type="text" id="answer-input" placeholder="Escribe tu respuesta">
+        <button class="btn-enviar-respuesta" id="btn-enviar-respuesta" id="answer-button">Enviar</button>
+      
+      </div>
+      <div id="feedback-area">
+        <h2>Evaluación</h2>
+        <p id="feedback-text">Aquí se muestra la evaluación del preguntón</p>
+       
+      </div>
+    </section>
+    <div class="parte-superior">
+      <button class="btn-empezar" id="btn-empezar">Empezar a jugar!</button>
+      <div id="status-container">
+        
+        <h2>Estado del juego:</h2>
+        <div>Ronda: </div>
+        <p>Jugador actual: <span id="current-player">jugador1</span></p>
+        <p>Tiempo restante: <span id="timer">30</span> </p>
+      </div>
+  </div>
+  </div>
+</body>
+</html>
