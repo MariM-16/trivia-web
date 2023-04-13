@@ -116,10 +116,62 @@ window.onload = function() {
 }
 }
 
-2
+
+if (pathname.includes("join_game.html")) {
+    generatorGames();
+    let btnCrearPartida = document.getElementById('crear');
+    let modalCrearPartida = document.getElementById('modalCrearPartida');
+    let closeBtn = document.getElementsByClassName('close')[0];
+    let crearBtn = document.getElementById("btn-crear");
+
+    btnCrearPartida.onclick = function() {
+      modalCrearPartida.classList.toggle("displayblock");
+    }
+
+    closeBtn.onclick = function() {
+      modalCrearPartida.classList.remove("displayblock");
+    }
+
+    window.onclick = function(event) {
+      if (event.target == modalCrearPartida) {
+        modalCrearPartida.classList.toggle("displayblock");
+      }
+    }
+
+    crearBtn.addEventListener("click", function() {
+      let nombreInput = document.getElementById("nombre").value;
+      let tiempoPreguntaSelect = document.getElementById("tiempoPregunta").value;
+      let tiempoRespuestaSelect = document.getElementById("tiempoRespuesta").value;
+
+      //agregamos la partida en los juegos disponibles
+      let game = document.createElement("div");
+      let button = document.createElement("button");
+      let tiempo1= document.createElement("h3");
+      let tiempo2= document.createElement("h3");
+
+      //asignamos las clases a lo creado
+      tiempo1.textContent = "Tiempo preguntas: " + tiempoPreguntaSelect + "s";
+      tiempo2.textContent = "Tiempo respuestas: " + tiempoRespuestaSelect + "s";
+      game.classList = "game";
+      game.textContent = nombreInput + "🔹 (0/13) participantes";
+      game.appendChild(tiempo1);
+      game.appendChild(tiempo2);
+      button.textContent = "Unirse";
+      button.classList = "bton";
+      game.appendChild(button);
+
+      //incluimos los juegos en el contenedor
+      container.appendChild(game);
+
+      console.log("Evento de clic agregado");
+      event.preventDefault(); // Evitar que la página se recargue
+      modalCrearPartida.classList.remove("displayblock");
+
+    });
+}
+
 //generamos las partidas ya existentes
 function generatorGames(){;
-  if (pathname.includes("join_game.html")) {
     let container = document.getElementById("container"); 
     let count=1;
     for(let i = 0; i<10; i++ ) { 
@@ -145,27 +197,5 @@ function generatorGames(){;
         container.appendChild(game);
       
     };
+
 }
-}
-if (pathname.includes("join_game.html")) {
-    let btnCrearPartida = document.getElementById('crear');
-    let modalCrearPartida = document.getElementById('modalCrearPartida');
-    let closeBtn = document.getElementsByClassName('close')[0];
-
-    btnCrearPartida.onclick = function() {
-      modalCrearPartida.classList.toggle("displayblock");
-    }
-
-    closeBtn.onclick = function() {
-      modalCrearPartida.classList.remove("displayblock");
-    }
-
-    window.onclick = function(event) {
-      if (event.target == modalCrearPartida) {
-        modalCrearPartida.classList.toggle("displayblock");
-      }
-}
-}
-
-
-generatorGames();
