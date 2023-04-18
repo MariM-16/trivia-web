@@ -429,3 +429,11 @@ header {
     width: 5em;
     
 }
+#errorContainer{
+  background-color: rgb(157, 12, 12);
+  text-align: center;
+  size: 2em;
+  height: 2em;
+  color: white;
+
+}

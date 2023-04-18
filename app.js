@@ -16,59 +16,61 @@ let cambiojugador = 1;
 let descalificaciones = 0;
 let rondas = 5;
 let contadorRondas = 0;
+let tokenAccess;
+let tokenRefresh;
 
 let respuestas = ["chelo", "piano", "violin", "guitarra", "tambor"]; // Puntajes de los jugadores
 
 if (pathname.includes("create_game.html")) {
-loginForm.addEventListener('submit', async (event) => {
-  event.preventDefault(); // Evitar que el formulario se envíe automáticamente
+  const errorContainer = document.getElementById('errorContainer');
+  errorContainer.classList.add("modalNone");
 
-  const username = document.getElementById('username-input').value;
-  const password = document.getElementById('password-input').value;
+  document.getElementById('login-button').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevenir la acción por defecto del formulario
 
-  // Crear objeto de datos
-  const data = {
-    username: username,
-    password: password
-  };
-  // Enviar solicitud POST a la API
-  try {
-    const response = await fetch('https://trivia-bck.herokuapp.com/api/token/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
+    // Obtener los valores de usuario y contraseña del formulario
+    var username = document.getElementById('username-input').value;
+    var password = document.getElementById('password-input').value;
+
+    // Datos del cuerpo de la solicitud en formato JSON
+    var data = {
+        username: username,
+        password: password
+    };
+
+    // Configurar opciones de la solicitud
+    var options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    };
+
+    // Realizar la solicitud POST para el login
+    fetch('https://trivia-bck.herokuapp.com/api/token/', options)
+    .then(function(response) {
+        if (response.ok) {
+            // La solicitud fue exitosa, obtener la respuesta en formato JSON
+            return response.json();
+        } else {
+            // Manejar errores de respuesta
+            errorContainer.classList.remove("modalNone");
+            errorContainer.textContent = 'Error en la solicitud: ' + response.status + ' Intentelo de nuevo';
+            throw new Error('Error en la solicitud: ' + response.status + ' Intentelo de nuevo');
+        }
+    })
+    .then(function(data) {
+        tokenAccess = data.token_access;
+        tokenRefresh = data.token_refresh;
+
+        window.location.href = 'join_game.html';
+    })
+    .catch(function(error) {
+        // Manejar errores de la solicitud
+        console.log(error);
+        errorContainer.textContent = ' ' + error.message;
     });
-    if (response.ok) {
-      // El inicio de sesión fue exitoso
-      const result = await response.json();
-      // Hacer algo con la respuesta del servidor, por ejemplo, redirigir a una página de inicio
-      console.log('Inicio de sesión exitoso:', result);
-      console.log(result.refresh);
-    } else {
-      // Mostrar mensaje de error si la respuesta del servidor no es exitosa
-      const error = await response.json();
-      errorMessage.textContent = error.message;
-    }
-  } catch (error) {
-    console.error('Error en la solicitud:', error);
-  }
-});
-
-
-
-// Agregar evento de click al botón de inicio de sesión
-document.getElementById('login-button').addEventListener('click', function() {
-  window.location.href = "join_game.html";
-  /*
-  // Ocultar sección de inicio de sesión
-  loginSection.style.display = 'none';
-  // Mostrar sección del juego
-  gameSection.style.display = 'block';
-  gameContainer.style.display= 'flex' ;
-  */
-
 });
 }
 
