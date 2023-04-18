@@ -77,28 +77,33 @@ if (pathname.includes("create_game.html")) {
 
 if (pathname.includes("join_game.html")) {
 
-
     generatorGames();
+  
     let btnCrearPartida = document.getElementById('crear');
     let modalCrearPartida = document.getElementById('modalCrearPartida');
     let closeBtn = document.getElementsByClassName('close')[0];
     let crearBtn = document.getElementById("btn-crear");
 
-    btnCrearPartida.onclick = function() {
-      modalCrearPartida.classList.toggle("displayblock");
-    }
+    btnCrearPartida.addEventListener("click", function() {
+      modalCrearPartida.classList.remove("modalNone");
+      modalCrearPartida.classList.add("modal");
+      console.log(modalCrearPartida);
+  });
 
-    closeBtn.onclick = function() {
-      modalCrearPartida.classList.remove("displayblock");
-    }
+    closeBtn.addEventListener("click", function() {
+      modalCrearPartida.classList.remove("modal");
+      modalCrearPartida.classList.add("modalNone");
+    });
 
     window.onclick = function(event) {
       if (event.target == modalCrearPartida) {
-        modalCrearPartida.classList.toggle("displayblock");
+        modalCrearPartida.classList.remove("modal");
+        modalCrearPartida.classList.add("modalNone");
       }
     }
 
     crearBtn.addEventListener("click", function() {
+    
       nombreInput = document.getElementById("nombre").value;
       tiempoPreguntaSelect = document.getElementById("tiempoPregunta").value;
       tiempoRespuestaSelect = document.getElementById("tiempoRespuesta").value;
@@ -151,6 +156,7 @@ if (pathname.includes("join_game.html")) {
 
 //generamos las partidas ya existentes
 function generatorGames(){;
+  console.log("dasojdioajs");
     let container = document.getElementById("container"); 
     
     let count=1;

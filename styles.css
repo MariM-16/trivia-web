@@ -206,7 +206,6 @@ header {
   }
 
   .modal {
-    display: none;
     position: fixed;
     z-index: 1;
     left: 0;
@@ -333,7 +332,6 @@ header {
 
 /* CSS MODAL SACADO DE https://www.w3schools.com/howto/howto_css_modals.asp */
 .modal {
-  display: none; 
   position: fixed;
   z-index: 1; 
   left: 0;
