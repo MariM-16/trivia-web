@@ -159,14 +159,7 @@ header {
     text-align: center;
     font-size: 1em;
     padding: 0.5em;
-    padding-bottom: 2em; 
-    max-height: 9em;  
-    max-width: 12em; 
-    min-height: 9em;  
-    min-width: 12em;   
-  }
-  .game h4{
-    margin-top: 0;
+    
   }
   .bton{
     background-color: #407088;
@@ -180,7 +173,7 @@ header {
     font-size: 0.8em;
     touch-action: manipulation;
     margin-bottom: 10px;
-    margin-top: 0;
+    margin-top: 0.5em;
   }
 .boton{
   text-align: center;
