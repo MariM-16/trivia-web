@@ -51,8 +51,9 @@ if (pathname.includes("create_game.html")) {
     fetch('https://trivia-bck.herokuapp.com/api/token/', options)
     .then(function(response) {
         if (response.ok) {
-            // La solicitud fue exitosa, obtener la respuesta en formato JSON
+            console.log(response);
             return response.json();
+            
         } else {
             // Manejar errores de respuesta
             errorContainer.classList.remove("modalNone");
@@ -61,9 +62,10 @@ if (pathname.includes("create_game.html")) {
         }
     })
     .then(function(data) {
-        tokenAccess = data.token_access;
-        tokenRefresh = data.token_refresh;
-
+        tokenAccess = data.access;
+        tokenRefresh = data.refresh;
+        localStorage.setItem('tokenAccess', tokenAccess);
+        localStorage.setItem('tokenRefresh', tokenRefresh);
         window.location.href = 'join_game.html';
     })
     .catch(function(error) {
@@ -76,6 +78,56 @@ if (pathname.includes("create_game.html")) {
 
 
 if (pathname.includes("join_game.html")) {
+  tokenAccess = localStorage.getItem('tokenAccess');
+  tokenRefresh = localStorage.getItem('tokenRefresh');
+  fetch('https://trivia-bck.herokuapp.com/api/games/', {
+    headers: {
+      'Authorization': `Bearer ${tokenAccess}`
+    }
+  })
+    .then(response => {
+      if (response.status === 401) { 
+        return fetch('https://trivia-bck.herokuapp.com/api/token/refresh/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ refresh: tokenRefresh }) 
+        })
+
+        .then(function(response) {
+          if (response.ok) {
+              return response.json();          
+          } 
+        })
+        .then(function(data) {
+          console.log(data);
+            tokenAccess = data.access;
+            localStorage.setItem('tokenAccess', tokenAccess);
+            tokenAccess = localStorage.getItem('tokenAccess');
+            fetch('https://trivia-bck.herokuapp.com/api/games/', {
+              headers: {
+                'Authorization': `Bearer ${tokenAccess}`
+              }
+            })
+            .then(function(response) {
+              if (response.ok) {
+                  return response.json();          
+              } 
+            })
+            .then(data => {
+              console.log(data); 
+            })
+        })
+      } else {
+        return response.json();
+      }
+    })
+    .then(data => {
+      let gamesJSON = JSON.stringify(data);
+      localStorage.setItem('data', gamesJSON);
+    })
+    .catch(error => console.error(error));
 
     generatorGames();
   
@@ -156,23 +208,23 @@ if (pathname.includes("join_game.html")) {
 
 //generamos las partidas ya existentes
 function generatorGames(){;
-  console.log("dasojdioajs");
+    let data = localStorage.getItem('data');
     let container = document.getElementById("container"); 
-    
-    let count=1;
-    for(let i = 0; i<10; i++ ) { 
+    console.log(data);
+    const juegos = JSON.parse(data);
+
+    juegos.forEach(function(elemento) { 
         let game = document.createElement("div");
         let button = document.createElement("button");
         let tiempo1= document.createElement("h3");
         let tiempo2= document.createElement("h3");
 
-        tiempo1.textContent = "Tiempo preguntas: " + 60 + "s";
-        tiempo2.textContent = "Tiempo respuestas: " + 60 + "s";
+        tiempo1.textContent = "Tiempo preguntas: " + elemento.question_time + "s";
+        tiempo2.textContent = "Tiempo respuestas: " + elemento.answer_time + "s";
   
         //asignamos las clases a lo creado
         game.classList = "game";
-        game.textContent = "Sala: "+ count + " 🔹 (0/13) participantes";
-        count++;
+        game.textContent = "Sala: "+ elemento.name + " 🔹 (" + elemento.player_count + ") participantes";
         game.appendChild(tiempo1);
         game.appendChild(tiempo2);
         button.textContent = "Unirse";
@@ -182,7 +234,8 @@ function generatorGames(){;
         //incluimos los juegos en el contenedor
         container.appendChild(game);
       
-    };
+    });
+
     // Obtener la cadena del div guardado en localStorage
     let divGuardado = localStorage.getItem("miDivGuardado");
 
