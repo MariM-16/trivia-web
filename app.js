@@ -51,8 +51,9 @@ if (pathname.includes("create_game.html")) {
     fetch('https://trivia-bck.herokuapp.com/api/token/', options)
     .then(function(response) {
         if (response.ok) {
-            // La solicitud fue exitosa, obtener la respuesta en formato JSON
+            console.log(response);
             return response.json();
+            
         } else {
             // Manejar errores de respuesta
             errorContainer.classList.remove("modalNone");
@@ -164,6 +165,61 @@ function checkSession() {
 
 
 if (pathname.includes("join_game.html")) {
+  const errorContainer = document.getElementById('errorContainer');
+  errorContainer.classList.add("modalNone");
+  
+  tokenAccess = localStorage.getItem('tokenAccess');
+  tokenRefresh = localStorage.getItem('tokenRefresh');
+  fetch('https://trivia-bck.herokuapp.com/api/games/', {
+    headers: {
+      'Authorization': `Bearer ${tokenAccess}`
+    }
+  })
+    .then(response => {
+      if (response.status === 401) { 
+        return fetch('https://trivia-bck.herokuapp.com/api/token/refresh/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ refresh: tokenRefresh }) 
+        })
+
+        .then(function(response) {
+          if (response.ok) {
+              return response.json();          
+          } 
+        })
+        .then(function(data) {
+          console.log(data);
+            tokenAccess = data.access;
+            localStorage.setItem('tokenAccess', tokenAccess);
+            tokenAccess = localStorage.getItem('tokenAccess');
+            fetch('https://trivia-bck.herokuapp.com/api/games/', {
+              headers: {
+                'Authorization': `Bearer ${tokenAccess}`
+              }
+            })
+            .then(function(response) {
+              if (response.ok) {
+                  return response.json();          
+              } 
+            })
+            .then(data => {
+              console.log(data); 
+            })
+        })
+      } else {
+        return response.json();
+      }
+    })
+    .then(data => {
+      console.log(data);
+      let gamesJSON = JSON.stringify(data);
+      localStorage.setItem('data', gamesJSON);
+    })
+    .catch(error => console.error(error));
+
     generatorGames();
     checkSession();
     let btnCrearPartida = document.getElementById('crear');
@@ -175,7 +231,7 @@ if (pathname.includes("join_game.html")) {
     btnCrearPartida.addEventListener("click", function() {
       modalCrearPartida.classList.remove("modalNone");
       modalCrearPartida.classList.add("modal");
-      console.log(modalCrearPartida);
+      console.log("asdksakosdko");
   });
 
     closeBtn.addEventListener("click", function() {
@@ -195,57 +251,87 @@ if (pathname.includes("join_game.html")) {
       nombreInput = document.getElementById("nombre").value;
       tiempoPreguntaSelect = document.getElementById("tiempoPregunta").value;
       tiempoRespuestaSelect = document.getElementById("tiempoRespuesta").value;
+          // Datos del cuerpo de la solicitud en formato JSON
+      var data = {
+        name: nombreInput,
+        question_time: tiempoPreguntaSelect,
+        answer_time: tiempoRespuestaSelect
+      };
 
-      //agregamos la partida en los juegos disponibles
-      let game = document.createElement("div");
-      let button = document.createElement("button");
-      let tiempo1= document.createElement("h3");
-      let tiempo2= document.createElement("h3");
+      fetch('https://trivia-bck.herokuapp.com/api/games/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${tokenAccess}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+        .then(response => {
+          if (response.status === 401) { 
+            return fetch('https://trivia-bck.herokuapp.com/api/token/refresh/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ refresh: tokenRefresh }) 
+            })
+    
+            .then(function(response) {
+              if (response.ok) {
+                  return response.json();          
+              } 
+              else{
+                // Manejar errores de respuesta
+                errorContainer.classList.remove("modalNone");
+                errorContainer.textContent = 'Error en la solicitud: ' + response.status + ' Intentelo de nuevo';
+                throw new Error('Error en la solicitud: ' + response.status + ' Intentelo de nuevo');
+              }
+            })
+            .then(function(data) {
+              console.log(data);
+                tokenAccess = data.access;
+                localStorage.setItem('tokenAccess', tokenAccess);
+                tokenAccess = localStorage.getItem('tokenAccess');
+                fetch('https://trivia-bck.herokuapp.com/api/games/', {
+                  headers: {
+                    'Authorization': `Bearer ${tokenAccess}`
+                  }
+                })
+                .then(function(response) {
+                  if (response.ok) {
+                      return response.json();          
+                  } 
+                })
+                .then(data => {
+                  console.log(data); 
+                })
+            })
+          } else {
+            return response.json();
+            
+          }
+        })
+        .catch(function(error) {
 
-      //asignamos las clases a lo creado
-      tiempo1.textContent = "Tiempo preguntas: " + tiempoPreguntaSelect + "s";
-      tiempo2.textContent = "Tiempo respuestas: " + tiempoRespuestaSelect + "s";
-      game.classList = "game";
-      game.textContent = nombreInput + "🔹 (0/13) participantes";
-      game.appendChild(tiempo1);
-      game.appendChild(tiempo2);
-      button.textContent = "Unirse";
-      button.classList = "bton";
-      game.appendChild(button);
-
-      //incluimos los juegos en el contenedor
-      container.appendChild(game);
-
-
-      event.preventDefault(); // Evitar que la página se recargue
-      modalCrearPartida.classList.remove("displayblock");
-      let botones = document.querySelectorAll(".bton");
-      botones.forEach(function(boton) {
-        boton.addEventListener("click", function() {
-          window.location.href = "start_game.html";
-        });
+          errorContainer.classList.remove("modalNone");
+          errorContainer.textContent = 'Error en la solicitud: ' + response.status + ' Intentelo de nuevo';
+          throw new Error('Error en la solicitud: ' + response.status + ' Intentelo de nuevo');
+        
       });
-      let divHTML = game.innerHTML;
-      localStorage.setItem("miDivGuardado", divHTML); //guardamos la sala creada en LocalStorage
-      localStorage.setItem("tiempoPreguntaSelect", tiempoPreguntaSelect); //guardamos la sala creada en LocalStorage
-      localStorage.setItem("tiempoRespuestaSelect", tiempoRespuestaSelect); //guardamos la sala creada en LocalStorage
-
-      console.log(tiempoPreguntaSelect);
-      console.log(tiempoRespuestaSelect);
-    });
-
-    let botones = document.querySelectorAll(".bton");
-    botones.forEach(function(boton) {
-      boton.addEventListener("click", function() {
-        window.location.href = "start_game.html";
-      });
+        location.reload();
     });
 }
 
 //generamos las partidas ya existentes
 function generatorGames(){;
-  console.log("dasojdioajs");
+    let data = localStorage.getItem('data');
     let container = document.getElementById("container"); 
+    let juegos;
+    try {
+       juegos = JSON.parse(data);
+    } catch (error) {
+      location.reload();
+    }
     
     let count=1;
     // Obtener los juegos disponibles
@@ -339,40 +425,6 @@ if (pathname.includes("start_game.html")) {
   let strikes = [0, 0, 0, 0, 0]; // Faltas de los jugadores
   let disqualifications = [0, 0, 0, 0, 0]; // Descalificaciones de los jugadores
 
-  // Función para responder a una pregunta
-  /*
-  function answerQuestion(option) {
-    // Verificar si la opción seleccionada es la respuesta correcta (por ejemplo, opción 1 es la respuesta correcta)
-    if (option === '1') {
-      playerScores[currentPlayer - 1] += 1; // Incrementar el puntaje del jugador actual
-    } else {
-      strikes[currentPlayer - 1] += 1; // Incrementar las faltas del jugador actual
-    }
-
-    // Cambiar al siguiente jugador
-    currentPlayer = (currentPlayer % 5) + 1;
-    
-    // Actualizar la pregunta y el jugador actual en la vista
-    document.getElementById('question').textContent = question;
-    document.getElementById('current-player').textContent = 'Jugador ' + currentPlayer;
-    document.getElementById('score-' + currentPlayer).textContent = playerScores[currentPlayer - 1];
-    document.getElementById('strikes-' + currentPlayer).textContent = strikes[currentPlayer - 1];
-
-    // Reiniciar el temporizador
-    timer = 30;
-    updateTimer();
-
-    // Verificar si un jugador ha alcanzado 3 faltas, lo cual resulta en una descalificación
-    if (strikes[currentPlayer - 1] === 3) {
-      disqualifications[currentPlayer - 1] += 1; // Incrementar las descalificaciones del jugador actual
-      document.getElementById('disqualifications-' + currentPlayer).textContent = disqualifications[currentPlayer - 1];
-      currentPlayer = (currentPlayer % 5) + 1; // Cambiar al siguiente jugador
-      document.getElementById('current-player').textContent = 'Jugador ' + currentPlayer;
-      timer = 30;
-      updateTimer();
-    }
-  }
-*/
 
   // Función para actualizar el temporizador en la vista
   let timerId;
