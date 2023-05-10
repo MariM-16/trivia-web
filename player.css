@@ -20,7 +20,19 @@
     color: #132743;
     height: min-content;
     margin-right: 5em;
-    
+  }
+
+  #game-section-player {
+    width: 45em;
+    flex-direction: column;
+    background-color: #eaf6f6;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    color: #132743;
+    height: min-content;
+    margin-right: 5em;
   }
   
   #login-section {
@@ -108,7 +120,7 @@
     margin-bottom: 10px;
     width: 100%;
   }
-  
+
   /* Media Query para pantallas pequeñas */
   @media (max-width: 768px) {
     #login-section,
