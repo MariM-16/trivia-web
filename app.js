@@ -64,8 +64,6 @@ if (pathname.includes("create_game.html")) {
     .then(function(data) {
         tokenAccess = data.access;
         tokenRefresh = data.refresh;
-        console.log(data.access);
-        console.log(data.refresh);
         localStorage.setItem('tokenAccess', tokenAccess);
         localStorage.setItem('tokenRefresh', tokenRefresh);
         setCookie('token_access', data.access, 4);
@@ -171,7 +169,7 @@ function checkSession() {
   if (tokenAccess) {
     // Decodificar el token de acceso para obtener la fecha de expiración
     //const { exp } = jwt_decode(tokenAccess);
-    console.log(tokenAccess);
+
     // Comprobar si el token de acceso ha expirado
     if (Date.now() >= exp * 1000) {
       // Obtener el token de actualización de las cookies
@@ -290,18 +288,17 @@ if (pathname.includes("join_game.html")) {
         modalCrearPartida.classList.add("modalNone");
       }
     }
+    document.getElementById('btn-crear').addEventListener('click',newGame);
 
     crearBtn.addEventListener("click", function() {
-    
+    document.getElementById('btn-crear').addEventListener('click',newGame);
+/* Cambié esto hacia la funcion newGame
       nombreInput = document.getElementById("nombre").value;
       tiempoPreguntaSelect = document.getElementById("tiempoPregunta").value;
       tiempoRespuestaSelect = document.getElementById("tiempoRespuesta").value;
           // Datos del cuerpo de la solicitud en formato JSON
-      var data = {
-        name: nombreInput,
-        question_time: tiempoPreguntaSelect,
-        answer_time: tiempoRespuestaSelect
-      };
+ 
+      let JSON_OBJECT = {'name': nombreInput, 'question_time': tiempoPreguntaSelect, 'answer_time': tiempoRespuestaSelect};
       localStorage.setItem('players','');
       token=getCookie('token_access');
       tokenr=getCookie('token_refresh');
@@ -312,9 +309,11 @@ if (pathname.includes("join_game.html")) {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify((JSON_OBJECT))
       })
         .then(response => {
+          console.log(response);
+          console.log(response.data);
           if (response.status === 401) { 
             return fetch('https://trivia-bck.herokuapp.com/api/token/refresh/', {
               method: 'POST',
@@ -338,7 +337,6 @@ if (pathname.includes("join_game.html")) {
               }
             })
             .then(function(data) {
-              console.log(data);
                 tokenAccess = data.access;
                 localStorage.setItem('tokenAccess', tokenAccess);
                 //setCookie('token_access', data.access, 4);
@@ -369,8 +367,10 @@ if (pathname.includes("join_game.html")) {
           throw new Error('Error en la solicitud: ' + response.status + ' Intentelo de nuevo');
         
       });
-        location.reload();
+        //location.reload();
+         */
     });
+   
     let botones = document.querySelectorAll('.bton');
 
 
@@ -382,6 +382,7 @@ if (pathname.includes("join_game.html")) {
         token=getCookie('token_access');
         tokenr=getCookie('token_refresh');
         localStorage.setItem('id_juego', id_juego);
+        console.log("idjuego"+ id_juego);
         let link = `https://trivia-bck.herokuapp.com/api/games/${id_juego}/join_game/`;
         console.log(link);
 
@@ -417,11 +418,11 @@ if (pathname.includes("join_game.html")) {
                 }
               })
               .then(function(data) {
-                console.log(data);
                   tokenAccess = data.access;
                   localStorage.setItem('tokenAccess', tokenAccess);
                   setCookie("game_id",id_juego);
-                  
+                  console.log("idjuego"+ id_juego);
+
                   //setCookie('token_access', data.access, 4);
                   token=getCookie('token_access');
                   tokenr=getCookie('token_refresh');
@@ -455,6 +456,53 @@ if (pathname.includes("join_game.html")) {
     });
 }
 
+/*prueba de crear juego*/
+function newGame(){
+  token=getCookie('token_access');
+  tokenr=getCookie('token_refresh');
+  nombreInput = document.getElementById("nombre").value;
+      tiempoPreguntaSelect = document.getElementById("tiempoPregunta").value;
+      tiempoRespuestaSelect = document.getElementById("tiempoRespuesta").value;
+          // Datos del cuerpo de la solicitud en formato JSON
+ 
+      let JSON_OBJECT = {'name': nombreInput, 'question_time': tiempoPreguntaSelect, 'answer_time': tiempoRespuestaSelect};
+      fetch('https://trivia-bck.herokuapp.com/api/token/refresh/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              //body: JSON.stringify({ refresh: tokenRefresh }) 
+              body: JSON.stringify({ refresh: tokenr }) 
+
+            })
+    
+            .then(function(response) {
+              if (response.ok) {
+                  return response.json();          
+              } 
+              else{
+                // Manejar errores de respuesta
+                errorContainer.classList.remove("modalNone");
+                errorContainer.textContent = 'Error en la solicitud: ' + response.status + ' Intentelo de nuevo';
+                throw new Error('Error en la solicitud: ' + response.status + ' Intentelo de nuevo');
+              }
+            })
+            .then(function(data) {
+                tokenAccess = data.access;
+                localStorage.setItem('tokenAccess', tokenAccess);
+                //setCookie('token_access', data.access, 4);
+                tokenAccess = localStorage.getItem('tokenAccess');})
+
+      fetch('https://trivia-bck.herokuapp.com/api/games/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${tokenAccess}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify((JSON_OBJECT))
+      })
+}
+/*fin aqui*/
 //generamos las partidas ya existentes
 function generatorGames(){
     let data = localStorage.getItem('data');
@@ -512,6 +560,8 @@ fetch('https://trivia-bck.herokuapp.com/api/games/', {
         tokenr=getCookie('token_refresh');
         localStorage.setItem('id_juego', id_juego);
         setCookie("game_id",id_juego);
+        console.log("idjuego"+ id_juego);
+
         let link = `https://trivia-bck.herokuapp.com/api/games/${id_juego}/join_game/`;
         console.log(link);
 
@@ -547,7 +597,6 @@ fetch('https://trivia-bck.herokuapp.com/api/games/', {
                 }
               })
               .then(function(data) {
-                console.log(data);
                   tokenAccess = data.access;
                   localStorage.setItem('tokenAccess', tokenAccess);
                   
@@ -582,6 +631,7 @@ fetch('https://trivia-bck.herokuapp.com/api/games/', {
             tokenr=getCookie('token_refresh');
             tokena = localStorage.getItem('tokenAcces');
             gameId=getCookie("game_id");
+            console.log("gameid: "+gameId);
             setCookie("players", JSON.stringify(data.players));
             setCookie('tiempoPreguntaSelect',data.question_time);
             setCookie("tiempoRespuestaSelect",data.answer_time);
@@ -601,6 +651,7 @@ if (pathname.includes("start_game.html")) {
   localStorage.setItem('tokenAccess',token)
   tokenr=getCookie('token_refresh');
   gameId=getCookie("game_id");
+  console.log("gameid: "+gameId);
   players=getCookie("players");
   question_time=getCookie('tiempoPreguntaSelect');
   answer_time= getCookie("tiempoRespuestaSelect");
@@ -671,7 +722,7 @@ if (pathname.includes("start_game.html")) {
   };
   
   socket.onmessage = function(event) {
-    console.log("Datos recibidos del servidor: ${event.data}");
+    console.log("Datos recibidos del servidor: " + event.data);
     data = JSON.parse(event.data)
     switch (data.type) {
     case "error":
@@ -688,7 +739,7 @@ if (pathname.includes("start_game.html")) {
       console.log("INICIÓ EL JUEGO ");
       break;
     case "round_started":
-      console.log("INICIÓ LA 1ra RONDA, preguntón "+ data.nosy_id + data.username);
+      console.log("INICIÓ LA RONDA, preguntón "+ data.nosy_id + data.username);
       break;
     case "round_question":
       console.log("INICIÓ LA RONDA pregunta, preguntón "+ data.nosy_id + data.username);
@@ -709,7 +760,7 @@ if (pathname.includes("start_game.html")) {
       showFalta();
       break;
     case "user_disqualified":
-      console.log("Usuario descalificado" + data.username);
+      console.log("Usuario descalificado" + data.userid);
       break;
     case "game_canceled":
       alert('Juego cancelado');
