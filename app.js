@@ -702,7 +702,7 @@ if (pathname.includes("start_game.html")) {
     case "round_answer":
       console.log("INICIÓ LA RONDA respuestas, preguntón "+ data.nosy_id + data.username);
       data.userid;
-      showRespuestas();
+      //showRespuestas();
       document.getElementById("evaluateAnswers").innerHTML += '<div>'+
         '<label class="view-labels">'+ data.answer +'</label>'+
         '<div><select class="userQualify">'+
@@ -784,7 +784,6 @@ if (pathname.includes("start_game.html")) {
       break;
     case "user_disqualified":
       console.log("Usuario descalificado" + data.player_id);
-      alert('Has sido descalificado');
       players_data[data.player_id].status = "Disqualified"
       document.getElementById('players').innerHTML = '';
       Object.keys(players_data).forEach(element => {
@@ -795,6 +794,7 @@ if (pathname.includes("start_game.html")) {
         '</li>'
       });
       if (data.player_id===getCookie("playerid")){
+        alert('Has sido descalificado');
         document.getElementById("status-container").classList.remove("hidden");
         document.getElementById("mod-start-rondas").classList.add("hidden");
         document.getElementById("game-section").classList.add("hidden");
@@ -819,6 +819,7 @@ if (pathname.includes("start_game.html")) {
         '<div> S: '+ players_data[element].status + '</div>' +
         '</li>'
       })
+      alert("Juego terminado");
 
       break;
     default:
@@ -871,7 +872,7 @@ if (pathname.includes("start_game.html")) {
       //showFalta();
       let currentP = "strikes-"+cambiojugador;
       let currentS = "state-"+cambiojugador;
-
+      /*
       let faltas1=document.getElementById(currentP);
       if(faltas1==3){
         descalificaciones++;
@@ -890,7 +891,7 @@ if (pathname.includes("start_game.html")) {
       let currentSiguiente = "state-"+cambiojugador;
       document.getElementById(currentSiguiente).textContent = "Pregunton";
       document.getElementById('current-player').textContent = "jugador"+ cambiojugador+1;
-    
+    */
 
     }
 
@@ -997,12 +998,14 @@ function sendReview() {
     JSON_Object = { "action": "question", "text": preguntaEnviada};
     socket.send(JSON.stringify(JSON_Object));
     document.getElementById('btn-enviar-pregunta').classList.toggle("btn-hidden");
+    document.getElementById('btn-enviar-pregunta').addEventListener('click', function() {
     let answerpInput = document.getElementById("answer-input"); // Obtén el elemento input por su ID
     let answerpValue = answerpInput.value; // Accede al valor del input
     respuestaEnviadap = answerpValue;
     JSON_Object = { "action": "answer", "text": respuestaEnviadap};
     socket.send(JSON.stringify(JSON_Object));
     document.getElementById('btn-enviar-respuesta').classList.toggle("btn-hidden");
+    })
 
     let questionContainer = document.getElementById('question-container');
 
