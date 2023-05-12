@@ -18,9 +18,7 @@ let contadorRondas = 0;
 let tokenAccess;
 let tokenRefresh;
 let nosy="";
-
-let respuestas = ["chelo", "piano", "violin", "guitarra", "tambor"]; // Puntajes de los jugadores
-
+let etapa="";
 if (pathname.includes("create_game.html")) {
   const errorContainer = document.getElementById('errorContainer');
   errorContainer.classList.add("modalNone");
@@ -300,6 +298,8 @@ if (pathname.includes("join_game.html")) {
 
 /*prueba de crear juego*/
 function newGame(){
+  const xhttp = new XMLHttpRequest();
+
   token=getCookie('token_access');
   tokenr=getCookie('token_refresh');
   nombreInput = document.getElementById("nombre").value;
@@ -308,7 +308,11 @@ function newGame(){
       // Datos del cuerpo de la solicitud en formato JSON
   let JSON_OBJECT = {'name': nombreInput, 'question_time': tiempoPreguntaSelect, 'answer_time': tiempoRespuestaSelect};
   console.log(JSON_OBJECT);
-  fetch('https://trivia-bck.herokuapp.com/api/token/refresh/', {
+  xhttp.open("POST", "https://trivia-bck.herokuapp.com/api/games/");
+  xhttp.setRequestHeader("Authorization","Bearer " + token)
+  xhttp.setRequestHeader("Content-Type","application/json")
+  xhttp.send(JSON.stringify(JSON_OBJECT));
+  /*fetch('https://trivia-bck.herokuapp.com/api/token/refresh/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -354,7 +358,7 @@ function newGame(){
           errorContainer.textContent = 'Error en la solicitud: ' + response.status + ' Intentelo de nuevo';
           throw new Error('Error en la solicitud: ' + response.status + ' Intentelo de nuevo');
         }
-      })
+      })*/
 }
 /*fin aqui*/
 
@@ -555,7 +559,9 @@ if (pathname.includes("start_game.html")) {
       console.log("error");
       document.getElementById('error').innerHTML = data.message
       document.getElementById('mod-start-rondas').classList.remove('hidden');
-      document.getElementById("status-container").classList.add("hidden");
+      //document.getElementById("status-container").classList.add("hidden");
+      setTimeout(10);
+      document.getElementById('mod-start-rondas').classList.add('hidden');
       break;
     case "player_joined":
       console.log("Nuevo jugador " + data.username + data.id); 
@@ -583,7 +589,7 @@ if (pathname.includes("start_game.html")) {
       break;
     case "game_started":
       document.getElementById("esperar").classList.add('hidden');
-      document.getElementById("mod-start-rondas").classList.remove('hidden');
+      document.getElementById("mod-start-rondas").classList.add('hidden');
       console.log("INICIÓ EL JUEGO ");
       if (data.nosy_id === parseInt(getCookie('playerid'))){
         preg();
@@ -671,6 +677,8 @@ if (pathname.includes("start_game.html")) {
       })
       break;
     case "round_started":
+      etapa="Pregunton preg";
+      document.getElementById('etapa').innerHTML = etapa;
       Object.keys(players_data).forEach(element => {
         if (data.nosy_id === players_data[element].id){
           nosy=players_data[element].username;
@@ -689,7 +697,9 @@ if (pathname.includes("start_game.html")) {
       }
       break;
     case "round_question":
-      console.log("INICIÓ LA RONDA pregunta, preguntón "+ data.nosy_id + data.username);
+      etapa="Players resp";
+      document.getElementById('etapa').innerHTML = etapa;
+      console.log("INICIÓ LA RONDA respuesta");
       if(localStorage.getItem("nosy") === "False") {
         play();
         document.getElementById("question2").innerHTML = data.question;
@@ -700,6 +710,8 @@ if (pathname.includes("start_game.html")) {
       }
       break;
     case "round_answer":
+      etapa="Pregunton ev";
+      document.getElementById('etapa').innerHTML = etapa;
       console.log("INICIÓ LA RONDA respuestas, preguntón "+ data.nosy_id + data.username);
       data.userid;
       //showRespuestas();
@@ -719,14 +731,16 @@ if (pathname.includes("start_game.html")) {
       }
       break;
     case "round_review_answer":
+      etapa="Players ev";
+      document.getElementById('etapa').innerHTML = etapa;
       console.log("Inicia la evaluación");
       if (localStorage.getItem("nosy") === "False"){
-        document.getElementById("feedback-nosy").classList.remove("hidden");
+        document.getElementById("feedback-nosy");
 
         evaluation = grade(data.grade);
 
         console.log(data.grade);
-        document.getElementById("answer-nosy-text").innerHTML = data.correct_answer
+        document.getElementById("answer-nosy-text").innerHTML = data.correct_answer;
         document.getElementById("feedback-nosy").innerHTML = "<div>"+
           "<div class='view-labels'>RESPUESTA ENTREGADA: " + data.graded_answer + "</div>" +
           '<input class="view-inputs" id="1" type="radio" value="true" name="review" checked>' +
@@ -756,19 +770,15 @@ if (pathname.includes("start_game.html")) {
         
         switch (data.category) {
           case "QT":
-            //document.getElementById('view_2').classList.add("hidden")
             faults += 2;
             break;
           case "AT":
-            //document.getElementById("view_3").classList.add("hidden");
             faults += 1;
             break;
           case "ET":
-            //document.getElementById("view_4").classList.add("hidden");
             faults += 1;
             break;
           case "FT":
-            //document.getElementById("view_5").classList.add("hidden");
             faults += 1;
             break;
           case "FF":
@@ -779,7 +789,8 @@ if (pathname.includes("start_game.html")) {
         }
         //document.getElementById('faults').innerHTML = "Faltas: " + faults;
         console.log("faltas id " + faults);
-        showFalta();
+        alert("No entregó a tiempo "+ data.category + " ! tienes una falta")
+        //showFalta();
       }
       break;
     case "user_disqualified":
@@ -827,6 +838,7 @@ if (pathname.includes("start_game.html")) {
   }
 
   };
+
   //document.getElementById('ronda').textContent = contadorRondas + "/" +rounds_number ;
   document.getElementById('btn-enviar-pregunta').disabled = true;
   let tiempoP = localStorage.getItem("tiempoPreguntaSelect");
@@ -839,11 +851,6 @@ if (pathname.includes("start_game.html")) {
   }
   let timerPregunta = tiempoPreguntaSelect; // Tiempo restante pra hacer la pregunta
   let timerRespuesta = tiempoRespuestaSelect; // Tiempo restante para hacer la respuesta
-
-
-  let playerScores = [0, 0, 0, 0, 0]; // Puntajes de los jugadores
-  let strikes = [0, 0, 0, 0, 0]; // Faltas de los jugadores
-  let disqualifications = [0, 0, 0, 0, 0]; // Descalificaciones de los jugadores
 
   document.getElementById('act').addEventListener('click',act);
   
@@ -956,7 +963,18 @@ function sendAnswer() {
   socket.send(JSON.stringify(JSON_Object));
   //document.getElementById("view_3").classList.add("hidden");
 }
-
+function grade(number) {
+  switch (number) {
+    case 0:
+      return "Mala"
+    case 1:
+      return "Mas o Menos"
+    case 2:
+      return "Buena"
+    default:
+      break;
+  }
+}
 function sendQualify() {
   document.querySelectorAll(".userQualify").forEach(element=>{
     data = element.value.split(',');
@@ -964,16 +982,13 @@ function sendQualify() {
     socket.send(JSON.stringify(JSON_Object));
   })
   document.getElementById("evaluateAnswers").innerHTML = "";
-  //document.getElementById("view_4").classList.add("hidden");
   time = 30;    
 }
 
 function sendReview() {
-  data = document.querySelector('input[name="review"]:checked').value;
   review= document.getElementById('answer-ev-button').value;
   JSON_Object = { "action": "assess", "correctness": review};
   socket.send(JSON.stringify(JSON_Object));
-  //document.getElementById("view_5").classList.add("hidden");
 }
 
   // Iniciar el temporizador cuando se haga click en empezar
@@ -1005,6 +1020,7 @@ function sendReview() {
     JSON_Object = { "action": "answer", "text": respuestaEnviadap};
     socket.send(JSON.stringify(JSON_Object));
     document.getElementById('btn-enviar-respuesta').classList.toggle("btn-hidden");
+    reiniciarTimer(timerRespuesta);
     })
 
     let questionContainer = document.getElementById('question-container');
@@ -1017,7 +1033,7 @@ function sendReview() {
     answerContainer.classList.remove("btn-hidden");
     answerContainer.classList.add("displayblock");
     console.log(answerContainer);
-    reiniciarTimer(timerRespuesta);
+    
   });
 
   let respuestasContainer = document.getElementById('respuestas-area');
@@ -1038,7 +1054,7 @@ function sendReview() {
     respuestasContainer.classList.remove("btn-hidden");
     respuestasContainer.classList.add("displayblock");
     reiniciarTimer(timerRespuesta+90);
-    setTimeout(showRespuestas(), 10000);
+    setTimeout(showRespuestas(), 30);
   });
   document.getElementById('answer-button').addEventListener('click',sendAnswer);
   document.getElementById("btn-enviar-pregunta").addEventListener('click',sendQuestion);
@@ -1055,7 +1071,7 @@ function sendReview() {
     sendAnswer();
     document.getElementById('answer-button').classList.toggle("btn-hidden");
     */
-    answerAreaPlayers.removeChild(answerInput);
+    //answerAreaPlayers.removeChild(answerInput);
 
     let textAnswer = document.createElement("div");
     textAnswer.classList.add("text-game-section");
@@ -1064,8 +1080,9 @@ function sendReview() {
     respuestaR++;
     respuestasContainer.classList.remove("btn-hidden");
     respuestasContainer.classList.add("displayblock");
+    document.getElementById('answer-ev-button').addEventListener('click',sendReview);
     reiniciarTimer(timerRespuesta+90);
-    setTimeout(showRespuestas(), 10000);
+    setTimeout(showRespuestas(), 30);
   });
   function showFalta(){
     modal.classList.toggle("modalBlock");
@@ -1099,7 +1116,6 @@ function showRespuestas(){
     console.log(selector);
     
     respuesta.classList = "respuestas";
-    respuesta.textContent = respuestas[i];
     respuesta.appendChild(selector);
     //incluimos las respuestas en el contenedor
     containerRespuestas.appendChild(respuesta);

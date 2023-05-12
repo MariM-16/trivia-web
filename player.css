@@ -25,8 +25,12 @@
     display: none;
     visibility: hidden;
 }
+#game-section{
+  position:static;
+  width: 38em;
+}
   #game-section-player {
-    width: 45em;
+    width: 38em;
     flex-direction: column;
     background-color: #eaf6f6;
     padding: 20px;
@@ -36,6 +40,7 @@
     color: #132743;
     height: min-content;
     margin-right: 5em;
+    position:absolute;
   }
 
   #login-section {
