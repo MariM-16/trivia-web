@@ -557,11 +557,10 @@ if (pathname.includes("start_game.html")) {
     switch (data.type) {
     case "error":
       console.log("error");
-      document.getElementById('error').innerHTML = data.message
-      document.getElementById('mod-start-rondas').classList.remove('hidden');
+      //document.getElementById('error').innerHTML = data.message;
+      alert( data.message);
+      //document.getElementById('mod-start-rondas').classList.remove('hidden');
       //document.getElementById("status-container").classList.add("hidden");
-      setTimeout(10);
-      document.getElementById('mod-start-rondas').classList.add('hidden');
       break;
     case "player_joined":
       console.log("Nuevo jugador " + data.username + data.id); 
@@ -678,7 +677,11 @@ if (pathname.includes("start_game.html")) {
       break;
     case "round_started":
       etapa="Pregunton preg";
+      reiniciarTimer(getCookie('tiempoPreguntaSelect'));
       document.getElementById('etapa').innerHTML = etapa;
+      localStorage.setItem("rondaact",data.round_number);
+      contadorRondas=getItem("rondaact");
+      document.getElementById('ronda').textContent = contadorRondas + "/" +rounds_number ;
       Object.keys(players_data).forEach(element => {
         if (data.nosy_id === players_data[element].id){
           nosy=players_data[element].username;
@@ -708,6 +711,7 @@ if (pathname.includes("start_game.html")) {
         preg();
         
       }
+      reiniciarTimer(getCookie('tiempoRespuestaSelect'));
       break;
     case "round_answer":
       etapa="Pregunton ev";
@@ -729,6 +733,7 @@ if (pathname.includes("start_game.html")) {
       if (localStorage.getItem("nosy") === "True"){
         document.getElementById("respuestas-area").classList.remove("hidden");
       }
+      reiniciarTimer(90);
       break;
     case "round_review_answer":
       etapa="Players ev";
@@ -742,15 +747,11 @@ if (pathname.includes("start_game.html")) {
         console.log(data.grade);
         document.getElementById("answer-nosy-text").innerHTML = data.correct_answer;
         document.getElementById("feedback-nosy").innerHTML = "<div>"+
-          "<div class='view-labels'>RESPUESTA ENTREGADA: " + data.graded_answer + "</div>" +
-          '<input class="view-inputs" id="1" type="radio" value="true" name="review" checked>' +
-          '<label for="1">True</label>' +
-          '<input class="view-inputs" id="2" type="radio" value="false" name="review">' +          
-          '<label for="2">False</label>' +
-          "</div>" +
+          "<div class='view-labels'>RESPUESTA ENTREGADA: " + data.correct_answer + "</div>" +
           "</div>"
       }
-      showRespuestas();
+      //showRespuestas();
+      reiniciarTimer(30);
       break;
     case "round_result":
       console.log("resultados");
@@ -851,6 +852,11 @@ if (pathname.includes("start_game.html")) {
   }
   let timerPregunta = tiempoPreguntaSelect; // Tiempo restante pra hacer la pregunta
   let timerRespuesta = tiempoRespuestaSelect; // Tiempo restante para hacer la respuesta
+
+
+  let playerScores = [0, 0, 0, 0, 0]; // Puntajes de los jugadores
+  let strikes = [0, 0, 0, 0, 0]; // Faltas de los jugadores
+  let disqualifications = [0, 0, 0, 0, 0]; // Descalificaciones de los jugadores
 
   document.getElementById('act').addEventListener('click',act);
   
@@ -955,13 +961,11 @@ function sendQuestion() {
   socket.send(JSON.stringify(JSON_Object));
   JSON_Object = { "action": "answer", "text": document.getElementById('answer-input').value};
   socket.send(JSON.stringify(JSON_Object));
-  //document.getElementById('view_2').classList.add("hidden");
 }
 
 function sendAnswer() {
   JSON_Object = { "action": "answer", "text": document.getElementById('answer-input2').value};
   socket.send(JSON.stringify(JSON_Object));
-  //document.getElementById("view_3").classList.add("hidden");
 }
 function grade(number) {
   switch (number) {
@@ -982,13 +986,14 @@ function sendQualify() {
     socket.send(JSON.stringify(JSON_Object));
   })
   document.getElementById("evaluateAnswers").innerHTML = "";
-  time = 30;    
+  reiniciarTimer(30);   
 }
 
 function sendReview() {
   review= document.getElementById('answer-ev-button').value;
   JSON_Object = { "action": "assess", "correctness": review};
   socket.send(JSON.stringify(JSON_Object));
+  //document.getElementById("view_5").classList.add("hidden");
 }
 
   // Iniciar el temporizador cuando se haga click en empezar
@@ -1013,15 +1018,8 @@ function sendReview() {
     JSON_Object = { "action": "question", "text": preguntaEnviada};
     socket.send(JSON.stringify(JSON_Object));
     document.getElementById('btn-enviar-pregunta').classList.toggle("btn-hidden");
-    document.getElementById('btn-enviar-pregunta').addEventListener('click', function() {
-    let answerpInput = document.getElementById("answer-input"); // Obtén el elemento input por su ID
-    let answerpValue = answerpInput.value; // Accede al valor del input
-    respuestaEnviadap = answerpValue;
-    JSON_Object = { "action": "answer", "text": respuestaEnviadap};
-    socket.send(JSON.stringify(JSON_Object));
-    document.getElementById('btn-enviar-respuesta').classList.toggle("btn-hidden");
     reiniciarTimer(timerRespuesta);
-    })
+
 
     let questionContainer = document.getElementById('question-container');
 
@@ -1035,6 +1033,14 @@ function sendReview() {
     console.log(answerContainer);
     
   });
+  document.getElementById('btn-enviar-respuesta').addEventListener('click', function() {
+    let answerpInput = document.getElementById("answer-input"); // Obtén el elemento input por su ID
+    let answerpValue = answerpInput.value; // Accede al valor del input
+    respuestaEnviadap = answerpValue;
+    JSON_Object = { "action": "answer", "text": respuestaEnviadap};
+    socket.send(JSON.stringify(JSON_Object));
+    document.getElementById('btn-enviar-respuesta').classList.toggle("btn-hidden");
+    })
 
   let respuestasContainer = document.getElementById('respuestas-area');
   document.getElementById('btn-enviar-respuesta').addEventListener('click', function() {
@@ -1054,7 +1060,7 @@ function sendReview() {
     respuestasContainer.classList.remove("btn-hidden");
     respuestasContainer.classList.add("displayblock");
     reiniciarTimer(timerRespuesta+90);
-    setTimeout(showRespuestas(), 30);
+    //setTimeout(showRespuestas(), 30);
   });
   document.getElementById('answer-button').addEventListener('click',sendAnswer);
   document.getElementById("btn-enviar-pregunta").addEventListener('click',sendQuestion);
@@ -1081,8 +1087,8 @@ function sendReview() {
     respuestasContainer.classList.remove("btn-hidden");
     respuestasContainer.classList.add("displayblock");
     document.getElementById('answer-ev-button').addEventListener('click',sendReview);
-    reiniciarTimer(timerRespuesta+90);
-    setTimeout(showRespuestas(), 30);
+    reiniciarTimer();
+    //setTimeout(showRespuestas(), 30);
   });
   function showFalta(){
     modal.classList.toggle("modalBlock");
