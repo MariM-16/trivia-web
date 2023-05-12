@@ -557,7 +557,7 @@ if (pathname.includes("start_game.html")) {
       console.log("error");
       //document.getElementById('error').innerHTML = data.message;
       alert( data.message);
-      //document.getElementById('mod-start-rondas').classList.remove('hidden');
+      document.getElementById('mod-start-rondas').classList.remove('hidden');
       //document.getElementById("status-container").classList.add("hidden");
       break;
     case "player_joined":
@@ -696,6 +696,7 @@ if (pathname.includes("start_game.html")) {
       else {
         document.getElementById('nosy-player').innerHTML = data.nosy_id ;
         play();
+        document.getElementById("answer-nosy-text").innerHTML = "Respuesta del preguntón";
         localStorage.setItem("nosy","False");
       }
       time = parseInt(localStorage.getItem("tiempoPreguntaSelect"));
@@ -819,7 +820,11 @@ if (pathname.includes("start_game.html")) {
       }
       break;
     case "game_canceled":
-      alert('Juego cancelado');
+      alert('Juego cancelado '+'<li class="user_info">' +
+      '<div>'+ players_data[element.userid] + " " +players_data[element].username + '</div>' +
+      '<div> P: '+ players_data[element].points + '</div>' +
+      '<div> S: '+ players_data[element].status + '</div>' +
+      '</li>');
       window.location.href = 'join_game.html';
       break;
     case "game_deleted":
@@ -937,16 +942,16 @@ function sendReview() {
     preguntaEnviada = questionValue;
     JSON_Object = { "action": "question", "text": preguntaEnviada};
     socket.send(JSON.stringify(JSON_Object));
-    document.getElementById('btn-enviar-pregunta').classList.toggle("btn-hidden");
+    //document.getElementById('btn-enviar-pregunta').classList.toggle("btn-hidden");
 
 
     let questionContainer = document.getElementById('question-container');
 
-    questionContainer.removeChild(questionInput);
+    //questionContainer.removeChild(questionInput);
     let text = document.createElement("div");
     text.classList.add("text-game-section");
     text.textContent = preguntaEnviada;
-    questionContainer.appendChild(text); 
+    //questionContainer.appendChild(text); 
     answerContainer.classList.remove("btn-hidden");
     answerContainer.classList.add("displayblock");
     console.log(answerContainer);
@@ -958,7 +963,7 @@ function sendReview() {
     respuestaEnviadap = answerpValue;
     JSON_Object = { "action": "answer", "text": respuestaEnviadap};
     socket.send(JSON.stringify(JSON_Object));
-    document.getElementById('btn-enviar-respuesta').classList.toggle("btn-hidden");
+    //document.getElementById('btn-enviar-respuesta').classList.toggle("btn-hidden");
     })
 
   let respuestasContainer = document.getElementById('respuestas-area');
@@ -967,7 +972,7 @@ function sendReview() {
     let answerInput = document.getElementById("answer-input"); // Obtén el elemento input por su ID
     let answerValue = answerInput.value; // Accede al valor del input
     respuestaEnviada = answerValue;
-    document.getElementById('btn-enviar-respuesta').classList.toggle("btn-hidden");
+    //document.getElementById('btn-enviar-respuesta').classList.toggle("btn-hidden");
     
     answerContainer.removeChild(answerInput);
 
