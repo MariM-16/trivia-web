@@ -391,8 +391,8 @@ fetch('https://trivia-bck.herokuapp.com/api/games/', {
     
     nameH3.textContent = "Sala: "+ game.name + " 🔹 players: " +  game.player_count;
     tool.textContent = "Creador: "+ game.creator.username + "Participantes: " + game.players.username;
-    questionTimeH3.textContent = "Tiempo pregunta: " + game.question_time + "s";
-    answerTimeH3.textContent = "Tiempo respuesta: " + game.answer_time + "s";
+    questionTimeH3.textContent = "Tiempo pregunta: " + game.question_time+ "s";
+    answerTimeH3.textContent = "Tiempo respuesta: " + game.answer_time+ "s";
     joinButton.textContent = "Unirse";
     joinButton.classList = "bton";
     joinButton.id=game.id;
@@ -520,9 +520,7 @@ if (pathname.includes("start_game.html")) {
   let players_data = {};
   let players = [];
   let faults = 0;
-  let points = 0;
   let time;
-  let winner;
   question_time=getCookie('tiempoPreguntaSelect');
   answer_time= getCookie("tiempoRespuestaSelect");
   
@@ -564,6 +562,7 @@ if (pathname.includes("start_game.html")) {
       break;
     case "player_joined":
       console.log("Nuevo jugador " + data.username + data.id); 
+      alert("Nuevo jugador " + data.username);
       if (!players.includes(data.username)){
         players.push(data.username);
         document.getElementById('players').innerHTML += "<li class='players'>"+ data.id + " " + data.username +"</li>"; 
@@ -572,6 +571,7 @@ if (pathname.includes("start_game.html")) {
     case "player_unjoined":
       console.log("Jugador desconectado " + data.username + data.id);
       players_data[data.userid].status = "Disconnected"
+      alert("Jugador desconectado " + data.username);
       players.splice(players.indexOf(data.username),1);
       document.getElementById('players').innerHTML = "";
       players.forEach(element => {
@@ -580,7 +580,7 @@ if (pathname.includes("start_game.html")) {
       document.getElementById('players').innerHTML = '';
       Object.keys(players_data).forEach(element => {
         document.getElementById('players').innerHTML += '<li class="user_info">' +
-        '<div>'+ players_data[element].id+ " " +players_data[element].username + '</div>' +
+        '<div>'+ players_data[element.userid]+ " " +players_data[element].username + '</div>' +
         '<div> P: '+ players_data[element].points + '</div>' +
         '<div> S: '+ players_data[element].status + '</div>' +
         '</li>'
@@ -600,7 +600,7 @@ if (pathname.includes("start_game.html")) {
         document.getElementById('nosy-player').innerHTML = data.nosy_id;
         localStorage.setItem("nosy","True");
       }
-      updateTimer(timerPregunta);
+      //updateTimer(timerPregunta);
       document.getElementById('btn-empezar').disabled = true;
       document.getElementById('btn-enviar-pregunta').disabled = false;
       contadorRondas++;
@@ -665,11 +665,12 @@ if (pathname.includes("start_game.html")) {
       data.players.forEach(element =>{
         players_data[element.userid] = {"username": element.username,"points":0,"status":"OK"};
       })
+      console.log(JSON.stringify(data.players) + "ESTE ES");
       console.log(players_data);
       document.getElementById('players').innerHTML = '';
       Object.keys(players_data).forEach(element => {
         document.getElementById('players').innerHTML += '<li class="user_info">' +
-        '<div>'+ players_data[element].id + " " +players_data[element].username + '</div>' +
+        '<div>'+ players_data[element.userid] + " " +players_data[element].username + '</div>' +
         '<div> P: '+ players_data[element].points + '</div>' +
         '<div> S: '+ players_data[element].status + '</div>' +
         '</li>'
@@ -677,10 +678,9 @@ if (pathname.includes("start_game.html")) {
       break;
     case "round_started":
       etapa="Pregunton preg";
-      reiniciarTimer(getCookie('tiempoPreguntaSelect'));
       document.getElementById('etapa').innerHTML = etapa;
       localStorage.setItem("rondaact",data.round_number);
-      contadorRondas=getItem("rondaact");
+      contadorRondas=localStorage.getItem("rondaact");
       document.getElementById('ronda').textContent = contadorRondas + "/" +rounds_number ;
       Object.keys(players_data).forEach(element => {
         if (data.nosy_id === players_data[element].id){
@@ -698,6 +698,8 @@ if (pathname.includes("start_game.html")) {
         play();
         localStorage.setItem("nosy","False");
       }
+      time = parseInt(localStorage.getItem("tiempoPreguntaSelect"));
+
       break;
     case "round_question":
       etapa="Players resp";
@@ -711,7 +713,8 @@ if (pathname.includes("start_game.html")) {
         preg();
         
       }
-      reiniciarTimer(getCookie('tiempoRespuestaSelect'));
+      time = parseInt(localStorage.getItem("tiempoRespuestaSelect"));
+
       break;
     case "round_answer":
       etapa="Pregunton ev";
@@ -733,7 +736,7 @@ if (pathname.includes("start_game.html")) {
       if (localStorage.getItem("nosy") === "True"){
         document.getElementById("respuestas-area").classList.remove("hidden");
       }
-      reiniciarTimer(90);
+      time = 90;
       break;
     case "round_review_answer":
       etapa="Players ev";
@@ -746,12 +749,14 @@ if (pathname.includes("start_game.html")) {
 
         console.log(data.grade);
         document.getElementById("answer-nosy-text").innerHTML = data.correct_answer;
+        /*
         document.getElementById("feedback-nosy").innerHTML = "<div>"+
           "<div class='view-labels'>RESPUESTA ENTREGADA: " + data.correct_answer + "</div>" +
           "</div>"
+        */
       }
       //showRespuestas();
-      reiniciarTimer(30);
+      time = 30;
       break;
     case "round_result":
       console.log("resultados");
@@ -761,7 +766,7 @@ if (pathname.includes("start_game.html")) {
       document.getElementById('players').innerHTML = '';
       Object.keys(players_data).forEach(element => {
         document.getElementById('players').innerHTML += '<li class="user_info">' +
-        '<div>'+ players_data[element].id +players_data[element].username + '</div>' +
+        '<div>'+ players_data[element.userid]+players_data[element].username + '</div>' +
         '<div> P: '+ players_data[element].points + '</div>' +
         '<div> S: '+ players_data[element].status + '</div>' +
         '</li>'
@@ -800,7 +805,7 @@ if (pathname.includes("start_game.html")) {
       document.getElementById('players').innerHTML = '';
       Object.keys(players_data).forEach(element => {
         document.getElementById('players').innerHTML += '<li class="user_info">' +
-        '<div>'+ players_data[element].id + " " +players_data[element].username + '</div>' +
+        '<div>'+ players_data[element.userid] + " " +players_data[element].username + '</div>' +
         '<div> P: '+ players_data[element].points + '</div>' +
         '<div> S: '+ players_data[element].status + '</div>' +
         '</li>'
@@ -826,7 +831,7 @@ if (pathname.includes("start_game.html")) {
       Object.keys(players_data).forEach(element =>{
         players_data[element].points = data.game_scores[element];
         document.getElementById('players').innerHTML += '<li class="user_info">' +
-        '<div>'+ players_data[element].id + " " +players_data[element].username + '</div>' +
+        '<div>'+ players_data[element.userid]+ " " +players_data[element].username + '</div>' +
         '<div> P: '+ players_data[element].points + '</div>' +
         '<div> S: '+ players_data[element].status + '</div>' +
         '</li>'
@@ -840,103 +845,12 @@ if (pathname.includes("start_game.html")) {
 
   };
 
-  //document.getElementById('ronda').textContent = contadorRondas + "/" +rounds_number ;
   document.getElementById('btn-enviar-pregunta').disabled = true;
-  let tiempoP = localStorage.getItem("tiempoPreguntaSelect");
-  let tiempoA = localStorage.getItem("tiempoRespuestaSelect");
   let modal = document.getElementById("myModal");
-
-  if (tiempoP !== null && tiempoA !== null) {
-    tiempoPreguntaSelect = tiempoP;
-    tiempoRespuestaSelect= tiempoA;
-  }
-  let timerPregunta = tiempoPreguntaSelect; // Tiempo restante pra hacer la pregunta
-  let timerRespuesta = tiempoRespuestaSelect; // Tiempo restante para hacer la respuesta
-
-
-  let playerScores = [0, 0, 0, 0, 0]; // Puntajes de los jugadores
-  let strikes = [0, 0, 0, 0, 0]; // Faltas de los jugadores
-  let disqualifications = [0, 0, 0, 0, 0]; // Descalificaciones de los jugadores
 
   document.getElementById('act').addEventListener('click',act);
   
 
-  // Función para actualizar el temporizador en la vista
-  let timerId;
-  function updateTimer(tipoTimer) {
-    document.getElementById('timer').textContent = tipoTimer + ' s';
-      if (tipoTimer > 0) {
-        // Limpiar el timeout anterior si existe
-        if (timerId) {
-          clearTimeout(timerId);
-        }
-        // Iniciar un nuevo timeout
-        timerId = setTimeout(function() {
-          tipoTimer--;
-          if (respuestaE==1){
-            timerRespuesta = tipoTimer;
-          }
-          updateTimer(tipoTimer);
-        }, 1000);
-      }
-    
-    if(tipoTimer==0 && respuestaE==0 ){
-      //abrir un modal
-      //showFalta();
-      let currentP = "strikes-"+cambiojugador;
-      let currentS = "state-"+cambiojugador;
-      /*
-      let faltas1=document.getElementById(currentP);
-      if(faltas1==3){
-        descalificaciones++;
-        let disq = "disqualifications-"+cambiojugador;
-        document.getElementById(disq).textContent = "SI";
-        document.getElementById(descalificaciones-totales).textContent = descalificaciones;
-      }
-      else{
-        let faltas2= parseInt(faltas1.textContent) + 1;
-
-        document.getElementById(currentP).textContent = faltas2;
-        document.getElementById(currentS).textContent = "Jugador";
-      }
-
-      cambiojugador++;
-      let currentSiguiente = "state-"+cambiojugador;
-      document.getElementById(currentSiguiente).textContent = "Pregunton";
-      document.getElementById('current-player').textContent = "jugador"+ cambiojugador+1;
-    */
-
-    }
-
-    if(tipoTimer==0 && respuestaR==0 ){
-      //abrir un modal
-      //showFalta();
-      let currentP = "strikes-"+cambiojugador;
-   
-
-      let faltas1=document.getElementById(currentP);
-      if(faltas1==3){
-        descalificaciones++;
-        let disq = "disqualifications-"+cambiojugador;
-        document.getElementById(disq).textContent = "SI";
-        document.getElementById(descalificaciones-totales).textContent = descalificaciones;
-      }
-      else{
-        let faltas2= parseInt(faltas1.textContent) + 1;
-
-        document.getElementById(currentP).textContent = faltas2;
-      }
-    }
-  }
-  // Reiniciar el timer con un nuevo valor
-  function reiniciarTimer(nuevoValor) {
-    // Limpiar el timeout anterior si existe
-    if (timerId) {
-      clearTimeout(timerId);
-    }
-    // Iniciar un nuevo timeout con el nuevo valor
-    updateTimer(nuevoValor);
-  }
   function start(){
     rounds_number=document.getElementById('rounds').value;
     localStorage.setItem("rondas",rounds_number);
@@ -986,26 +900,32 @@ function sendQualify() {
     socket.send(JSON.stringify(JSON_Object));
   })
   document.getElementById("evaluateAnswers").innerHTML = "";
-  reiniciarTimer(30);   
+  //reiniciarTimer(30);  
+  time = 30;    
 }
+document.getElementById("timeers").innerHTML = localStorage.getItem("tiempoPreguntaSelect");
+setInterval(timeer,1000);
 
+function timeer() {
+  if (time > 0){
+    time --;
+    document.getElementById("timeers").innerHTML = time;
+  }
+}
 function sendReview() {
-  review= document.getElementById('answer-ev-button').value;
+  if (data.correct_answer===null){
+    review="false";
+  }
+  else{
+    review= document.getElementById('answer-ev-button').value;
+  }
   JSON_Object = { "action": "assess", "correctness": review};
   socket.send(JSON.stringify(JSON_Object));
-  //document.getElementById("view_5").classList.add("hidden");
 }
 
   // Iniciar el temporizador cuando se haga click en empezar
   document.getElementById('btn-empezar').addEventListener('click', function() {
     start();
-    /* se pasó para cuando inicia el juego
-    updateTimer(timerPregunta);
-    document.getElementById('btn-empezar').disabled = true;
-    document.getElementById('btn-enviar-pregunta').disabled = false;
-    contadorRondas++;
-    rounds_number=getCookie("rondas");
-    document.getElementById('ronda').textContent = contadorRondas + "/" +rounds_number ;*/
   });
 
   let answerContainer = document.getElementById('answer-area');
@@ -1018,7 +938,6 @@ function sendReview() {
     JSON_Object = { "action": "question", "text": preguntaEnviada};
     socket.send(JSON.stringify(JSON_Object));
     document.getElementById('btn-enviar-pregunta').classList.toggle("btn-hidden");
-    reiniciarTimer(timerRespuesta);
 
 
     let questionContainer = document.getElementById('question-container');
@@ -1059,7 +978,7 @@ function sendReview() {
     respuestaR++;
     respuestasContainer.classList.remove("btn-hidden");
     respuestasContainer.classList.add("displayblock");
-    reiniciarTimer(timerRespuesta+90);
+    //reiniciarTimer(timerRespuesta+90);
     //setTimeout(showRespuestas(), 30);
   });
   document.getElementById('answer-button').addEventListener('click',sendAnswer);
@@ -1087,9 +1006,10 @@ function sendReview() {
     respuestasContainer.classList.remove("btn-hidden");
     respuestasContainer.classList.add("displayblock");
     document.getElementById('answer-ev-button').addEventListener('click',sendReview);
-    reiniciarTimer();
+    //reiniciarTimer();
     //setTimeout(showRespuestas(), 30);
   });
+  
   function showFalta(){
     modal.classList.toggle("modalBlock");
     span.onclick = function() {
@@ -1133,7 +1053,7 @@ document.getElementById('name').innerHTML = "Nombre: " +playerusername;
 
 document.getElementById('btn-enviar-calificaciones').addEventListener('click', function() {
   document.getElementById('btn-enviar-calificaciones').classList.toggle("btn-hidden");
-  reiniciarTimer(30);
+  //reiniciarTimer(30);
 });
 }
 function act(){

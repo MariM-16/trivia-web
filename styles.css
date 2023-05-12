@@ -78,6 +78,32 @@ header {
     right: 0px;
     top: 450px;
   }
+  .timer-container {
+    position: relative;
+  }
+  
+  .timer {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-family: 'Poppins';
+  }
+  
+  .timer span {
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #eee;
+  }
+  
+  .timer .seconds {
+    background-color: #ffb5b5;
+    color: #fff;
+  }
 
   #username-input {
     margin-left: 1em;
