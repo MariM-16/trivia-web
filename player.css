@@ -21,7 +21,10 @@
     height: min-content;
     margin-right: 5em;
   }
-
+.hidden {
+    display: none;
+    visibility: hidden;
+}
   #game-section-player {
     width: 45em;
     flex-direction: column;
@@ -34,7 +37,7 @@
     height: min-content;
     margin-right: 5em;
   }
-  
+
   #login-section {
     text-align: center;
     margin: 0 auto;

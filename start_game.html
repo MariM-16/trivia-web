@@ -19,8 +19,10 @@
     
   </header>
   <div id="game-container">
+    
     <div id="players-container">
       <div class="player-card">
+        <div><ul class="player-list" id="players"></ul></div>
         <div id="nombre-jugador">● Jugador: jugador1</div>
         <div id="estado-jugador">● Estado: <span id="state-1">Preguntón</span></div>
         <div id="puntaje-jugador">● Puntaje : <span id="score-1">0</span></div>
@@ -56,7 +58,10 @@
         <div id="descalificaciones-jugador">● Descalificacion: <span id="disqualifications-5">NO</span></div>
       </div>
     </div>
-    <section id="game-section">
+    <div id="esperar" class="hidden">
+      <label>ESPERANDO...</label>
+    </div>
+    <section id="game-section" class="hidden">
       <div id="question-area">
         <div id="question-container">
           <h2>Pregunta:</h2>
@@ -73,9 +78,10 @@
         <button class="btn-enviar-respuesta" id="btn-enviar-respuesta" id="answer-button">Enviar</button>
       
       </div>
-      <div id="respuestas-area" >
+      <div id="respuestas-area" class="hidden" >
         <h2>Respuestas de los jugadores</h2>
         <div id="containerRespuestas"></div>
+        <div id="evaluateAnswers"></div>
         <button class="btn-enviar-calificaciones" id="btn-enviar-calificaciones" >Enviar Calificaciones</button>
       </div>
       <div id="feedback-area">
@@ -84,7 +90,7 @@
        
       </div>
     </section>
-    <section class="btn-hidden" id="game-section-player">
+    <section class="hidden" id="game-section-player">
 
       <div id="question-area">
         <div id="question-container">
@@ -112,19 +118,22 @@
       <div id="feedback-area">
         <h2>Evaluación</h2>
         <p id="feedback-text">Evaluación del preguntón a tu respuesta</p>
-        <p id="answer-nosy-text">Respuesta del preguntón</p>
-        <p>Evaluar trabajo del Preguntón</p>
+        <div id="feedback-nosy">
+          <p id="answer-nosy-text">Respuesta del preguntón</p>
+          <p>Evaluar trabajo del Preguntón</p>
+        </div>
         <button class="button" id="answer-ev-button" value="1">Buena</button>
         <button class="button" id="answer-ev-button" value="0">Mala</button>
       </div>
     </section>
     <div class="parte-superior">
-      <button class="btn-empezar" id="btn-empezar">Empezar a jugar!</button>
+      <button class="btn-empezar hidden" id="btn-empezar">Empezar a jugar!</button>
+      
       <div id="status-container">
         
         <h2>Estado del juego:</h2>
         <div>Ronda: <span id="ronda">0/0</span></div>
-        <p>Pregunton: <span id="current-player">jugador1</span></p>
+        <p>Pregunton: <span id="nosy-player" >jugador1</span></p>
         <p>Tiempo restante: <span id="timer">-</span> </p>
         <p>Descalificaciones: <span id="descalificaciones-totales">0</span> </p>
       </div>
@@ -136,6 +145,6 @@
         <p>No entregaste a tiempo! tienes una falta</p>
     </div>
 
-    </div>
+  </div>
 </body>
 </html>
