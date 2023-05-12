@@ -62,7 +62,7 @@
     margin-bottom: 20px;
   }
   
-  #answer-area {
+  #answer-area,#answer-area-players{
     padding: 10px;
     background-color: #fff;
     margin-bottom: 20px;

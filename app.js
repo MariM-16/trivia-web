@@ -69,7 +69,6 @@ if (pathname.includes("create_game.html")) {
         setCookie('token_refresh', data.refresh, 24);
 
         const expires_in = 300000; // 5 minutos en milisegundos
-        setTimeout(refreshToken, expires_in - 60000); // Renovar token_access 1 minuto antes de que expire       
         fetch('https://trivia-bck.herokuapp.com/api/profile/', {
           method: 'GET',
           headers: {
@@ -111,72 +110,6 @@ function setCookie(name, value, days) {
   }
   document.cookie = name + "=" + (value || "")  + expires + "; path=/";
 }
-
-
-function refreshToken() {
-  const tokenRefresh = getCookie('token_refresh');
-  if (tokenRefresh) {
-    const options = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refresh: tokenRefresh })
-    };
-    fetch('https://trivia-bck.herokuapp.com/api/token/refresh', options)
-      .then(response => {
-        if (response.ok) {
-          response.json().then(data => {
-            setCookie('token_access', data.access, 4);
-            setCookie('token_refresh', data.refresh, 24);
-          });
-        } else {
-          console.error('Error refreshing token');
-        }
-      })
-      .catch(error => console.error('Error refreshing token:', error));
-  } else {
-    console.error('Refresh token not found');
-  }
-}
-
-function checkSession() {
-  // Obtener el token de acceso de las cookies
-  const tokenAccess = getCookie('token_access');
-
-  if (tokenAccess) {
-    // Decodificar el token de acceso para obtener la fecha de expiración
-    //const { exp } = jwt_decode(tokenAccess);
-
-    // Comprobar si el token de acceso ha expirado
-    if (Date.now() >= exp * 1000) {
-      // Obtener el token de actualización de las cookies
-      const tokenRefresh = getCookie('token_refresh');
-
-      if (tokenRefresh) {
-        // Utilizar el token de actualización para obtener uno nuevo
-        fetch('https://trivia-bck.herokuapp.com/api/token/refresh/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            refresh: tokenRefresh
-          })
-        })
-        .then(response => response.json())
-        .then(data => {
-          // Almacenar el nuevo token de acceso en cookies
-          setCookie('token_access', data.access, 4);
-        })
-        .catch(error => console.error(error));
-      } else {
-        console.error('No hay token de actualización en las cookies');
-      }
-    }
-  } else {
-    console.error('No hay token de acceso en las cookies');
-  }
-}
-
 
 if (pathname.includes("join_game.html")) {
   playerusername=getCookie('playerusername');
@@ -243,7 +176,6 @@ if (pathname.includes("join_game.html")) {
     .catch(error => console.error(error));
 
     generatorGames();
-    //checkSession();
     let btnCrearPartida = document.getElementById('crear');
     let modalCrearPartida = document.getElementById('modalCrearPartida');
     let closeBtn = document.getElementsByClassName('close')[0];
@@ -597,14 +529,14 @@ if (pathname.includes("start_game.html")) {
   
   if (getCookie("playerid") === creator) {
     document.getElementById("mod-start-rondas").classList.remove("hidden");
-    document.getElementById("status-container").classList.add("hidden");
+    //document.getElementById("status-container").classList.add("hidden");
   }
   else {
     document.getElementById("esperar").classList.remove('hidden');
   }
   if ( playerslist != '') {
     JSON.parse(playerslist).forEach(element => {
-      document.getElementById('players').innerHTML += "<li>"+ element.username +"</li>";
+      document.getElementById('players').innerHTML += "<li>"+ element.id +" "+ element.username +"</li>";
       players.push(element.username);
     })
   }
@@ -626,14 +558,14 @@ if (pathname.includes("start_game.html")) {
       document.getElementById("status-container").classList.add("hidden");
       break;
     case "player_joined":
-      console.log("Nuevo jugador " + data.username + data.userid); 
+      console.log("Nuevo jugador " + data.username + data.id); 
       if (!players.includes(data.username)){
         players.push(data.username);
-        document.getElementById('players').innerHTML += "<li class='players'>"+ data.username +"</li>"; 
+        document.getElementById('players').innerHTML += "<li class='players'>"+ data.id + " " + data.username +"</li>"; 
       }      
       break;
     case "player_unjoined":
-      console.log("Jugador desconectado " + data.username + data.userid);
+      console.log("Jugador desconectado " + data.username + data.id);
       players_data[data.userid].status = "Disconnected"
       players.splice(players.indexOf(data.username),1);
       document.getElementById('players').innerHTML = "";
@@ -643,14 +575,32 @@ if (pathname.includes("start_game.html")) {
       document.getElementById('players').innerHTML = '';
       Object.keys(players_data).forEach(element => {
         document.getElementById('players').innerHTML += '<li class="user_info">' +
-        '<div>'+ players_data[element].username + '</div>' +
-        '<div>'+ players_data[element].points + '</div>' +
-        '<div>'+ players_data[element].status + '</div>' +
+        '<div>'+ players_data[element].id+ " " +players_data[element].username + '</div>' +
+        '<div> P: '+ players_data[element].points + '</div>' +
+        '<div> S: '+ players_data[element].status + '</div>' +
         '</li>'
       })
       break;
     case "game_started":
+      document.getElementById("esperar").classList.add('hidden');
+      document.getElementById("mod-start-rondas").classList.remove('hidden');
       console.log("INICIÓ EL JUEGO ");
+      if (data.nosy_id === parseInt(getCookie('playerid'))){
+        preg();
+        document.getElementById('nosy-player').innerHTML = data.nosy_id;
+        localStorage.setItem("nosy","True");
+      }
+      else{
+        play();
+        document.getElementById('nosy-player').innerHTML = data.nosy_id;
+        localStorage.setItem("nosy","True");
+      }
+      updateTimer(timerPregunta);
+      document.getElementById('btn-empezar').disabled = true;
+      document.getElementById('btn-enviar-pregunta').disabled = false;
+      contadorRondas++;
+      rounds_number=getCookie("rondas");
+      document.getElementById('ronda').textContent = contadorRondas + "/" +rounds_number ;
       let link = `https://trivia-bck.herokuapp.com/api/games/${gameId}/state/`;
 
   fetch(link, {
@@ -714,7 +664,7 @@ if (pathname.includes("start_game.html")) {
       document.getElementById('players').innerHTML = '';
       Object.keys(players_data).forEach(element => {
         document.getElementById('players').innerHTML += '<li class="user_info">' +
-        '<div>'+ players_data[element].username + '</div>' +
+        '<div>'+ players_data[element].id + " " +players_data[element].username + '</div>' +
         '<div> P: '+ players_data[element].points + '</div>' +
         '<div> S: '+ players_data[element].status + '</div>' +
         '</li>'
@@ -728,21 +678,25 @@ if (pathname.includes("start_game.html")) {
       })
       console.log("INICIÓ LA RONDA, preguntón "+ data.nosy_id + " " +nosy);
       if (data.nosy_id === parseInt(getCookie('playerid'))){
-        document.getElementById("game-section").classList.remove("hidden");
-        document.getElementById('nosy-player').innerHTML = data.nosy_id + " " +nosy;
+        preg();
+        document.getElementById('nosy-player').innerHTML = data.nosy_id;
         localStorage.setItem("nosy","True");
       }
       else {
-        document.getElementById('nosy-player').innerHTML = "";
+        document.getElementById('nosy-player').innerHTML = data.nosy_id ;
+        play();
         localStorage.setItem("nosy","False");
-        document.getElementById("game-section-player").classList.remove("hidden");
       }
       break;
     case "round_question":
       console.log("INICIÓ LA RONDA pregunta, preguntón "+ data.nosy_id + data.username);
       if(localStorage.getItem("nosy") === "False") {
-        document.getElementById("game-section-player").classList.remove("hidden");
+        play();
         document.getElementById("question2").innerHTML = data.question;
+      }
+      else {
+        preg();
+        
       }
       break;
     case "round_answer":
@@ -767,7 +721,7 @@ if (pathname.includes("start_game.html")) {
     case "round_review_answer":
       console.log("Inicia la evaluación");
       if (localStorage.getItem("nosy") === "False"){
-        document.getElementById("view_5").classList.remove("hidden");
+        document.getElementById("feedback-nosy").classList.remove("hidden");
 
         evaluation = grade(data.grade);
 
@@ -792,9 +746,9 @@ if (pathname.includes("start_game.html")) {
       document.getElementById('players').innerHTML = '';
       Object.keys(players_data).forEach(element => {
         document.getElementById('players').innerHTML += '<li class="user_info">' +
-        '<div>'+ players_data[element].username + '</div>' +
-        '<div>'+ players_data[element].points + '</div>' +
-        '<div>'+ players_data[element].status + '</div>' +
+        '<div>'+ players_data[element].id +players_data[element].username + '</div>' +
+        '<div> P: '+ players_data[element].points + '</div>' +
+        '<div> S: '+ players_data[element].status + '</div>' +
         '</li>'
       })
     case "user_fault":
@@ -825,8 +779,8 @@ if (pathname.includes("start_game.html")) {
         }
         //document.getElementById('faults').innerHTML = "Faltas: " + faults;
         console.log("faltas id " + faults);
+        showFalta();
       }
-      showFalta();
       break;
     case "user_disqualified":
       console.log("Usuario descalificado" + data.player_id);
@@ -835,26 +789,34 @@ if (pathname.includes("start_game.html")) {
       document.getElementById('players').innerHTML = '';
       Object.keys(players_data).forEach(element => {
         document.getElementById('players').innerHTML += '<li class="user_info">' +
-        '<div>'+ players_data[element].username + '</div>' +
-        '<div>'+ players_data[element].points + '</div>' +
-        '<div>'+ players_data[element].status + '</div>' +
+        '<div>'+ players_data[element].id + " " +players_data[element].username + '</div>' +
+        '<div> P: '+ players_data[element].points + '</div>' +
+        '<div> S: '+ players_data[element].status + '</div>' +
         '</li>'
-      })
+      });
+      if (data.player_id===getCookie("playerid")){
+        document.getElementById("status-container").classList.remove("hidden");
+        document.getElementById("mod-start-rondas").classList.add("hidden");
+        document.getElementById("game-section").classList.add("hidden");
+        document.getElementById("game-section-player").classList.add("hidden");
+      }
       break;
     case "game_canceled":
       alert('Juego cancelado');
+      window.location.href = 'join_game.html';
       break;
     case "game_deleted":
       alert('Juego eliminado');
+      window.location.href = 'join_game.html';
       break;
     case "game_result":
       console.log("Resultados finales");
       Object.keys(players_data).forEach(element =>{
         players_data[element].points = data.game_scores[element];
         document.getElementById('players').innerHTML += '<li class="user_info">' +
-        '<div>'+ players_data[element].username + '</div>' +
-        '<div>'+ players_data[element].points + '</div>' +
-        '<div>'+ players_data[element].status + '</div>' +
+        '<div>'+ players_data[element].id + " " +players_data[element].username + '</div>' +
+        '<div> P: '+ players_data[element].points + '</div>' +
+        '<div> S: '+ players_data[element].status + '</div>' +
         '</li>'
       })
 
@@ -970,15 +932,59 @@ if (pathname.includes("start_game.html")) {
     document.getElementById("mod-start-rondas").classList.add("hidden");
     document.getElementById("status-container").classList.remove("hidden");
   }
+
+  function preg(){
+    document.getElementById("game-section").classList.remove("hidden");
+    document.getElementById("game-section-player").classList.add("hidden")
+  }
+  function play(){
+    document.getElementById("game-section-player").classList.remove("hidden");
+    document.getElementById("game-section").classList.add("hidden");
+  }
+  
+function sendQuestion() {
+  JSON_Object = { "action": "question", "text": document.getElementById('question').value};
+  socket.send(JSON.stringify(JSON_Object));
+  JSON_Object = { "action": "answer", "text": document.getElementById('answer-input').value};
+  socket.send(JSON.stringify(JSON_Object));
+  //document.getElementById('view_2').classList.add("hidden");
+}
+
+function sendAnswer() {
+  JSON_Object = { "action": "answer", "text": document.getElementById('answer-input2').value};
+  socket.send(JSON.stringify(JSON_Object));
+  //document.getElementById("view_3").classList.add("hidden");
+}
+
+function sendQualify() {
+  document.querySelectorAll(".userQualify").forEach(element=>{
+    data = element.value.split(',');
+    JSON_Object = { "action": "qualify", "userid": data[1],"grade": data[0]};
+    socket.send(JSON.stringify(JSON_Object));
+  })
+  document.getElementById("evaluateAnswers").innerHTML = "";
+  //document.getElementById("view_4").classList.add("hidden");
+  time = 30;    
+}
+
+function sendReview() {
+  data = document.querySelector('input[name="review"]:checked').value;
+  review= document.getElementById('answer-ev-button').value;
+  JSON_Object = { "action": "assess", "correctness": review};
+  socket.send(JSON.stringify(JSON_Object));
+  //document.getElementById("view_5").classList.add("hidden");
+}
+
   // Iniciar el temporizador cuando se haga click en empezar
   document.getElementById('btn-empezar').addEventListener('click', function() {
     start();
+    /* se pasó para cuando inicia el juego
     updateTimer(timerPregunta);
     document.getElementById('btn-empezar').disabled = true;
     document.getElementById('btn-enviar-pregunta').disabled = false;
     contadorRondas++;
     rounds_number=getCookie("rondas");
-    document.getElementById('ronda').textContent = contadorRondas + "/" +rounds_number ;
+    document.getElementById('ronda').textContent = contadorRondas + "/" +rounds_number ;*/
   });
 
   let answerContainer = document.getElementById('answer-area');
@@ -988,22 +994,23 @@ if (pathname.includes("start_game.html")) {
     let questionInput = document.getElementById("question"); // Obtén el elemento input por su ID
     let questionValue = questionInput.value; // Accede al valor del input
     preguntaEnviada = questionValue;
-    JSON_Object = { "action": "question", "text": document.getElementById('question').value};
-    socket.send(JSON.stringify(JSON_Object));
-    JSON_Object = { "action": "answer", "text": document.getElementById('answer').value};
+    JSON_Object = { "action": "question", "text": preguntaEnviada};
     socket.send(JSON.stringify(JSON_Object));
     document.getElementById('btn-enviar-pregunta').classList.toggle("btn-hidden");
-    
+    let answerpInput = document.getElementById("answer-input"); // Obtén el elemento input por su ID
+    let answerpValue = answerpInput.value; // Accede al valor del input
+    respuestaEnviadap = answerpValue;
+    JSON_Object = { "action": "answer", "text": respuestaEnviadap};
+    socket.send(JSON.stringify(JSON_Object));
+    document.getElementById('btn-enviar-respuesta').classList.toggle("btn-hidden");
+
     let questionContainer = document.getElementById('question-container');
 
     questionContainer.removeChild(questionInput);
-
     let text = document.createElement("div");
     text.classList.add("text-game-section");
     text.textContent = preguntaEnviada;
-    questionContainer.appendChild(text);
-
-    
+    questionContainer.appendChild(text); 
     answerContainer.classList.remove("btn-hidden");
     answerContainer.classList.add("displayblock");
     console.log(answerContainer);
@@ -1019,6 +1026,33 @@ if (pathname.includes("start_game.html")) {
     document.getElementById('btn-enviar-respuesta').classList.toggle("btn-hidden");
     
     answerContainer.removeChild(answerInput);
+
+    let textAnswer = document.createElement("div");
+    textAnswer.classList.add("text-game-section");
+    textAnswer.textContent = respuestaEnviada;
+    answerContainer.appendChild(textAnswer);
+    respuestaR++;
+    respuestasContainer.classList.remove("btn-hidden");
+    respuestasContainer.classList.add("displayblock");
+    reiniciarTimer(timerRespuesta+90);
+    setTimeout(showRespuestas(), 10000);
+  });
+  document.getElementById('answer-button').addEventListener('click',sendAnswer);
+  document.getElementById("btn-enviar-pregunta").addEventListener('click',sendQuestion);
+  document.getElementById("btn-enviar-calificaciones").addEventListener('click',sendQualify);
+  document.getElementById('answer-ev-button').addEventListener('click',sendReview);
+  
+  let answerAreaPlayers = document.getElementById('answer-area-players');
+  document.getElementById('answer-button').addEventListener('click', function() {
+    
+    let answerInput = document.getElementById("answer-input2"); // Obtén el elemento input por su ID
+    let answerValue = answerInput.value; // Accede al valor del input
+    respuestaEnviada = answerValue;
+    /*
+    sendAnswer();
+    document.getElementById('answer-button').classList.toggle("btn-hidden");
+    */
+    answerAreaPlayers.removeChild(answerInput);
 
     let textAnswer = document.createElement("div");
     textAnswer.classList.add("text-game-section");

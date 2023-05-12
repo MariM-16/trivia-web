@@ -36,18 +36,14 @@
           <h2>Pregunta:</h2>
           <input type="text" id="question" name="question" placeholder="Escribe tu pregunta aquí...">
           <button class="btn-enviar-pregunta" id="btn-enviar-pregunta" id="answer-button">Enviar</button>
-        </div>
-        
+        </div>    
       </div>
-  
-      
-      <div id="answer-area" class="btn-hidden">
-        <h2>Respuesta</h2>
+      <div id="answer-area">
+        <h2>Respuesta:</h2>
         <input type="text" id="answer-input" placeholder="Escribe tu respuesta">
-        <button class="btn-enviar-respuesta" id="btn-enviar-respuesta" id="answer-button">Enviar</button>
-      
+        <button class="btn-enviar-respuesta" id="btn-enviar-respuesta" id="answer-button">Enviar</button>  
       </div>
-      <div id="respuestas-area" class="hidden" >
+      <div id="respuestas-area">
         <h2>Respuestas de los jugadores</h2>
         <div id="containerRespuestas"></div>
         <div id="evaluateAnswers"></div>
@@ -64,7 +60,7 @@
       <div id="question-area">
         <div id="question-container">
           <h2>Pregunta:</h2>
-          <p id="question2">¿Cuál es la capital de Francia?</p>
+          <p id="question2"> </p>
         </div>
       </div>
       <div id="api-area">
@@ -78,9 +74,9 @@
         </div>
       </div>
       
-      <div id="answer-area">
+      <div id="answer-area-players">
         <h2>Respuesta</h2>
-        <input type="text" id="answer-input" placeholder="Escribe tu respuesta" required>
+        <input type="text" id="answer-input2" placeholder="Escribe tu respuesta" required>
         <button class="button" id="answer-button">Enviar respuesta</button>
              
       </div>
@@ -91,10 +87,11 @@
           <p id="answer-nosy-text">Respuesta del preguntón</p>
           <p>Evaluar trabajo del Preguntón</p>
         </div>
-        <button class="button" id="answer-ev-button" value="1">Buena</button>
-        <button class="button" id="answer-ev-button" value="0">Mala</button>
+        <button class="button" id="answer-ev-button" value="true">Buena</button>
+        <button class="button" id="answer-ev-button" value="false">Mala</button>
       </div>
     </section>
+
     <div class="parte-superior">
 
       <div id="mod-start-rondas" class="hidden"> 
@@ -103,11 +100,11 @@
         <button class="btn-empezar" id="btn-empezar">Empezar a jugar!</button>
         <div class="error" id="error"></div>
       </div>
-      <div id="status-container" class="hidden">
+      <div id="status-container">
         
         <h2>Estado del juego:</h2>
         <div>Ronda: <span id="ronda">0/0</span></div>
-        <p>Pregunton: <span id="nosy-player" >jugador1</span></p>
+        <p>Pregunton: <span id="nosy-player" ></span></p>
         <p>Tiempo restante: <span id="timer">-</span> </p>
         <p>Descalificaciones: <span id="descalificaciones-totales">0</span> </p>
       </div>
@@ -116,7 +113,7 @@
   <div id="myModal" class="modal" hidden>
     <div class="modal-content">
         <span class="close">&times;</span>
-        <p>No entregaste a tiempo! tienes una falta</p>
+        <p> <span id="faltaa"></span>No entregó a tiempo! tienes una falta</p>
     </div>
 
   </div>
