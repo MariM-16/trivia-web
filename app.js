@@ -14,10 +14,10 @@ let respuestaE = 0;
 let respuestaR = 0;
 let cambiojugador = 1;
 let descalificaciones = 0;
-let rondas = 5;
 let contadorRondas = 0;
 let tokenAccess;
 let tokenRefresh;
+let nosy="";
 
 let respuestas = ["chelo", "piano", "violin", "guitarra", "tambor"]; // Puntajes de los jugadores
 
@@ -80,6 +80,8 @@ if (pathname.includes("create_game.html")) {
         .then(response => response.json())
         .then(data => {
           setCookie('playerid', data.id);
+          console.log("user"+ data.username );
+          setCookie('playerusername', data.username);
           window.location.href = 'join_game.html';
         })
         
@@ -177,6 +179,9 @@ function checkSession() {
 
 
 if (pathname.includes("join_game.html")) {
+  playerusername=getCookie('playerusername');
+  document.getElementById('act').addEventListener('click',act);
+
   const errorContainer = document.getElementById('errorContainer');
   errorContainer.classList.add("modalNone");
   token=getCookie('token_access');
@@ -585,8 +590,14 @@ if (pathname.includes("start_game.html")) {
   question_time=getCookie('tiempoPreguntaSelect');
   answer_time= getCookie("tiempoRespuestaSelect");
   
+  
+  
+  localStorage.setItem('tiempoPreguntaSelect',question_time);
+  localStorage.setItem("tiempoRespuestaSelect",answer_time);
+  
   if (getCookie("playerid") === creator) {
-    document.getElementById("btn-empezar").classList.remove("hidden")
+    document.getElementById("mod-start-rondas").classList.remove("hidden");
+    document.getElementById("status-container").classList.add("hidden");
   }
   else {
     document.getElementById("esperar").classList.remove('hidden');
@@ -597,12 +608,6 @@ if (pathname.includes("start_game.html")) {
       players.push(element.username);
     })
   }
-  
-  rounds_number=getCookie("rondas");
-  localStorage.setItem('tiempoPreguntaSelect',question_time);
-  localStorage.setItem("tiempoRespuestaSelect",answer_time);
-  localStorage.setItem("rondas",rounds_number);
-  
   let socket = new WebSocket("wss://trivia-bck.herokuapp.com/ws/trivia/" + gameId + "/?token=" + token);
   socket.onopen = function(e) {
     console.log("Conexion establecida");
@@ -610,11 +615,15 @@ if (pathname.includes("start_game.html")) {
   };
   
   socket.onmessage = function(event) {
+    
     console.log("Datos recibidos del servidor: " + event.data);
     data = JSON.parse(event.data)
     switch (data.type) {
     case "error":
       console.log("error");
+      document.getElementById('error').innerHTML = data.message
+      document.getElementById('mod-start-rondas').classList.remove('hidden');
+      document.getElementById("status-container").classList.add("hidden");
       break;
     case "player_joined":
       console.log("Nuevo jugador " + data.username + data.userid); 
@@ -706,21 +715,27 @@ if (pathname.includes("start_game.html")) {
       Object.keys(players_data).forEach(element => {
         document.getElementById('players').innerHTML += '<li class="user_info">' +
         '<div>'+ players_data[element].username + '</div>' +
-        '<div>'+ players_data[element].points + '</div>' +
-        '<div>'+ players_data[element].status + '</div>' +
+        '<div> P: '+ players_data[element].points + '</div>' +
+        '<div> S: '+ players_data[element].status + '</div>' +
         '</li>'
       })
       break;
     case "round_started":
-      console.log("INICIÓ LA RONDA, preguntón "+ data.nosy_id + data.username);
+      Object.keys(players_data).forEach(element => {
+        if (data.nosy_id === players_data[element].id){
+          nosy=players_data[element].username;
+        }
+      })
+      console.log("INICIÓ LA RONDA, preguntón "+ data.nosy_id + " " +nosy);
       if (data.nosy_id === parseInt(getCookie('playerid'))){
         document.getElementById("game-section").classList.remove("hidden");
-        document.getElementById('nosy-player').innerHTML = "Actualmente eres el pregunton";
+        document.getElementById('nosy-player').innerHTML = data.nosy_id + " " +nosy;
         localStorage.setItem("nosy","True");
       }
       else {
         document.getElementById('nosy-player').innerHTML = "";
         localStorage.setItem("nosy","False");
+        document.getElementById("game-section-player").classList.remove("hidden");
       }
       break;
     case "round_question":
@@ -849,8 +864,7 @@ if (pathname.includes("start_game.html")) {
   }
 
   };
-  let rondas=localStorage.getItem("rondas");
-  document.getElementById('ronda').textContent = contadorRondas + "/" +rondas ;
+  //document.getElementById('ronda').textContent = contadorRondas + "/" +rounds_number ;
   document.getElementById('btn-enviar-pregunta').disabled = true;
   let tiempoP = localStorage.getItem("tiempoPreguntaSelect");
   let tiempoA = localStorage.getItem("tiempoRespuestaSelect");
@@ -868,6 +882,8 @@ if (pathname.includes("start_game.html")) {
   let strikes = [0, 0, 0, 0, 0]; // Faltas de los jugadores
   let disqualifications = [0, 0, 0, 0, 0]; // Descalificaciones de los jugadores
 
+  document.getElementById('act').addEventListener('click',act);
+  
 
   // Función para actualizar el temporizador en la vista
   let timerId;
@@ -945,14 +961,24 @@ if (pathname.includes("start_game.html")) {
     // Iniciar un nuevo timeout con el nuevo valor
     updateTimer(nuevoValor);
   }
-
+  function start(){
+    rounds_number=document.getElementById('rounds').value;
+    localStorage.setItem("rondas",rounds_number);
+    setCookie("rondas",rounds_number);
+    JSON_Object = { "action": "start", "rounds": rounds_number};
+    socket.send(JSON.stringify(JSON_Object));
+    document.getElementById("mod-start-rondas").classList.add("hidden");
+    document.getElementById("status-container").classList.remove("hidden");
+  }
   // Iniciar el temporizador cuando se haga click en empezar
   document.getElementById('btn-empezar').addEventListener('click', function() {
+    start();
     updateTimer(timerPregunta);
     document.getElementById('btn-empezar').disabled = true;
     document.getElementById('btn-enviar-pregunta').disabled = false;
     contadorRondas++;
-    document.getElementById('ronda').textContent = contadorRondas + "/" +rondas ;
+    rounds_number=getCookie("rondas");
+    document.getElementById('ronda').textContent = contadorRondas + "/" +rounds_number ;
   });
 
   let answerContainer = document.getElementById('answer-area');
@@ -1043,8 +1069,43 @@ function showRespuestas(){
 
     }
 }
+playerusername=getCookie('playerusername');
+document.getElementById('name').innerHTML = "Nombre: " +playerusername;
+
 document.getElementById('btn-enviar-calificaciones').addEventListener('click', function() {
   document.getElementById('btn-enviar-calificaciones').classList.toggle("btn-hidden");
   reiniciarTimer(30);
 });
+}
+function act(){
+  token=getCookie('token_access');
+  tokenr=getCookie('token_refresh');
+  fetch('https://trivia-bck.herokuapp.com/api/token/refresh/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        //body: JSON.stringify({ refresh: tokenRefresh }) 
+        body: JSON.stringify({ refresh: tokenr }) 
+
+      })
+
+      .then(function(response) {
+        if (response.ok) {
+            return response.json();          
+        } 
+        else{
+          // Manejar errores de respuesta
+          errorContainer.classList.remove("modalNone");
+          errorContainer.textContent = 'Error en la solicitud: ' + response.status + ' Intentelo de nuevo';
+          throw new Error('Error en la solicitud: ' + response.status + ' Intentelo de nuevo');
+        }
+      })
+      .then(function(data) {
+          tokenAccess = data.access;
+          localStorage.setItem('tokenAccess', tokenAccess);
+          //setCookie('token_access', data.access, 4);
+          tokenAccess = localStorage.getItem('tokenAccess');
+          console.log("se actualizó");
+        })
 }
